@@ -1,0 +1,14 @@
+.box {
+  overflow: hidden;
+  margin: 20px auto 20px;
+  max-width: 75%;
+  height: auto;
+  border: 2px solid #636363;
+  border-radius: 10px;
+  padding: 0px;
+}
+.box h1 {
+  font-size: 2rem;
+  text-align: left;
+  padding-left: 5%;
+}
