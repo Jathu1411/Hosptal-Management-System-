@@ -1,0 +1,128 @@
+[
+  { "Employee": "" },
+
+  {
+    "name": "Arjun. K",
+    "NIC": "961234567V",
+    "post": "Ticket Clerk",
+    "unit": "OPD",
+    "phone": "0771234567",
+    "grade": "Minor staff"
+  },
+
+  {
+    "name": "Hansani. K",
+    "NIC": "962345671V",
+    "post": "Consultion Doctor",
+    "unit": "OPD",
+    "phone": "0772345671",
+    "grade": "Medical Office Staff"
+  },
+
+  {
+    "name": "Vikram. K",
+    "NIC": "963456712V",
+    "post": "Dispenser",
+    "unit": "OPD",
+    "phone": "0773456712",
+    "grade": "Minor staff"
+  },
+
+  {
+    "name": "Andrea. K",
+    "NIC": "964567123V",
+    "post": "Admission Doctor",
+    "unit": "OPD",
+    "phone": "0774567123",
+    "grade": "Medical Office Staff"
+  },
+
+  {
+    "name": "Keerthi. K",
+    "NIC": "965671234V",
+    "post": "OPD In Charge",
+    "unit": "OPD",
+    "phone": "0775671234",
+    "grade": "Medical Office Staff"
+  },
+
+  { "Patient": "" },
+
+  {
+    "NIC": "961234567V",
+    "name": "John. S",
+    "DOB": "24-08-1980",
+    "gender": "male",
+    "address": "Colombo",
+    "phone": "0771234567",
+    "stage": "registered"
+  },
+
+  {
+    "NIC": "962345671V",
+    "name": "Ann. S",
+    "DOB": "05-08-1965",
+    "gender": "female",
+    "address": "Galle",
+    "phone": "0772345671",
+    "stage": "OPD consulted"
+  },
+
+  {
+    "NIC": "963456712V",
+    "name": "Bill. S",
+    "DOB": "24-08-1985",
+    "gender": "male",
+    "address": "Colombo",
+    "phone": "0771234567",
+    "stage": "OPD prescribed"
+  },
+
+  {
+    "NIC": "964567123V",
+    "name": "Salman. S",
+    "DOB": "24-08-1995",
+    "gender": "male",
+    "address": "Malabe",
+    "phone": "0771234567",
+    "stage": "OPD issued"
+  },
+
+  {
+    "NIC": "965671234V",
+    "name": "Krithik. S",
+    "DOB": "24-08-1992",
+    "gender": "male",
+    "address": "Colombo",
+    "phone": "0771234567",
+    "stage": "clinic referenced"
+  },
+
+  {
+    "NIC": "9667812345V",
+    "name": "Nikitha. S",
+    "DOB": "24-08-1997",
+    "gender": "female",
+    "address": "Batticaloa",
+    "phone": "0771234567",
+    "stage": "ward referenced"
+  },
+
+  {
+    "NIC": "9678123456V",
+    "name": "Nithya. S",
+    "DOB": "24-08-1998",
+    "gender": "female",
+    "address": "Colombo",
+    "phone": "0771234567",
+    "stage": "ward admitted"
+  },
+
+  { "Consultation": "" },
+
+  {
+    "date": ""
+  },
+
+  {}
+]
