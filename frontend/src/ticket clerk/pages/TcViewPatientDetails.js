@@ -1,7 +1,7 @@
 import React from "react";
 
-const TcDashboard = () => {
+const TcViewPatientDetails = () => {
   return <h2>Ticket clerk Dashboard</h2>;
 };
 
-export default TcDashboard;
+export default TcViewPatientDetails;
