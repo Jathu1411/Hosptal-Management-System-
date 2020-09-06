@@ -1,7 +1,13 @@
 import React from "react";
 
+import Box from "../../shared/components/Box";
+
 const TcSearchAllPatients = () => {
-  return <h2>Ticket clerk Search all patients</h2>;
+  return (
+    <div>
+      <Box heading="Ticket clerk Search all patients"></Box>
+    </div>
+  );
 };
 
 export default TcSearchAllPatients;

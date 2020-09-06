@@ -1,7 +1,13 @@
 import React from "react";
 
+import Box from "../../shared/components/Box";
+
 const Login = () => {
-  return <h2>Login</h2>;
+  return (
+    <div>
+      <Box heading="Login"></Box>
+    </div>
+  );
 };
 
 export default Login;
