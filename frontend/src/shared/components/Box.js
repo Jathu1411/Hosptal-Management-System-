@@ -7,6 +7,7 @@ const Box = (props) => {
     <div className="box_space">
       <div className="box">
         <h1>{props.heading}</h1>
+        <h1>Hi Vithu</h1>
         <hr />
       </div>
     </div>
