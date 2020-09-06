@@ -1,6 +1,7 @@
 .outer_box_space {
   max-width: 1400px;
   margin: auto;
+  padding: 0px;
 }
 
 .box {
@@ -14,12 +15,12 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .box h1 {
-  font-size: 2vw;
+  font-size: 25px;
   text-align: left;
   padding: 0px;
   padding-left: 5%;
 }
 
 .inner_content {
-  padding: 0% 5%;
+  padding: 1% 5%;
 }
