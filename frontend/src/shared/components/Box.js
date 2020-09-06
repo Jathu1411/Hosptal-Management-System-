@@ -4,11 +4,11 @@ import "./Box.css";
 
 const Box = (props) => {
   return (
-    <div className="box_space">
+    <div className="outer_box_space">
       <div className="box">
         <h1>{props.heading}</h1>
-        <h1>Hi Vithu</h1>
         <hr />
+        <div className="inner_content">{props.children}</div>
       </div>
     </div>
   );

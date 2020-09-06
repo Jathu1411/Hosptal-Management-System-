@@ -4,4 +4,7 @@
 
 hr {
   display: block;
+  height: 1px;
+  background-color: var(--grey-color);
+  border: none;
 }

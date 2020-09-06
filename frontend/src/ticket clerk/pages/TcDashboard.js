@@ -5,7 +5,7 @@ import Box from "../../shared/components/Box";
 const TcDashboard = () => {
   return (
     <div>
-      <h2>Ticket clerk Dashboard</h2>,<Box heading="hi"></Box>
+      <Box heading="Ticket clerk Dashboard"></Box>
     </div>
   );
 };
