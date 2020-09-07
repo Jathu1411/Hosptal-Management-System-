@@ -53,3 +53,11 @@
   color: var(--grey-color);
   border: 1px solid var(--grey-color);
 }
+
+@media screen and (max-width: 600px) {
+  .normal_button {
+    font-size: 3vw;
+    text-align: center;
+    padding: 10px;
+  }
+}

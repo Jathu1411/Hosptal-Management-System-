@@ -51,7 +51,7 @@
   {
     "NIC": "961234567V",
     "name": "John. S",
-    "DOB": "24-08-1980",
+    "DOB": "1980-08-24",
     "gender": "male",
     "address": "Colombo",
     "phone": "0771234567",
@@ -61,7 +61,7 @@
   {
     "NIC": "962345671V",
     "name": "Ann. S",
-    "DOB": "05-08-1965",
+    "DOB": "1965-08-05",
     "gender": "female",
     "address": "Galle",
     "phone": "0772345671",
@@ -71,7 +71,7 @@
   {
     "NIC": "963456712V",
     "name": "Bill. S",
-    "DOB": "24-08-1985",
+    "DOB": "1985-08-24",
     "gender": "male",
     "address": "Colombo",
     "phone": "0771234567",
@@ -81,7 +81,7 @@
   {
     "NIC": "964567123V",
     "name": "Salman. S",
-    "DOB": "24-08-1995",
+    "DOB": "1995-08-24",
     "gender": "male",
     "address": "Malabe",
     "phone": "0771234567",
@@ -91,7 +91,7 @@
   {
     "NIC": "965671234V",
     "name": "Krithik. S",
-    "DOB": "24-08-1992",
+    "DOB": "1992-08-24",
     "gender": "male",
     "address": "Colombo",
     "phone": "0771234567",
@@ -101,7 +101,7 @@
   {
     "NIC": "9667812345V",
     "name": "Nikitha. S",
-    "DOB": "24-08-1997",
+    "DOB": "1997-08-24",
     "gender": "female",
     "address": "Batticaloa",
     "phone": "0771234567",
@@ -111,7 +111,7 @@
   {
     "NIC": "9678123456V",
     "name": "Nithya. S",
-    "DOB": "24-08-1998",
+    "DOB": "1998-08-24",
     "gender": "female",
     "address": "Colombo",
     "phone": "0771234567",
