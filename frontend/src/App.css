@@ -1,10 +1,4 @@
 .App {
   text-align: center;
-}
-
-hr {
-  display: block;
-  height: 1px;
-  background-color: var(--grey-color);
-  border: none;
+  height: 100%;
 }

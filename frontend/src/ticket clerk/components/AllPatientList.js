@@ -7,7 +7,7 @@ const AllPatientList = (props) => {
   if (props.items.length === 0) {
     return (
       <div className="no_item_message">
-        <h2>No registered patients yet</h2>
+        <h2>No patients registered yet</h2>
       </div>
     );
   }

@@ -2,8 +2,21 @@
   { "Employee": "" },
 
   {
+    "username": "admin",
+    "password": "123",
+    "name": "sathees",
+    "nic": "159",
+    "post": "leader",
+    "unit": "ITP",
+    "phone": "1234567891",
+    "grade": "first"
+  },
+
+  {
+    "username": "arjun",
+    "password": "123",
     "name": "Arjun. K",
-    "NIC": "961234567V",
+    "nic": "961234567V",
     "post": "Ticket Clerk",
     "unit": "OPD",
     "phone": "0771234567",
@@ -11,8 +24,10 @@
   },
 
   {
+    "username": "hansani",
+    "password": "123",
     "name": "Hansani. K",
-    "NIC": "962345671V",
+    "nic": "962345671V",
     "post": "Consultion Doctor",
     "unit": "OPD",
     "phone": "0772345671",
@@ -20,8 +35,10 @@
   },
 
   {
+    "username": "vikram",
+    "password": "123",
     "name": "Vikram. K",
-    "NIC": "963456712V",
+    "nic": "963456712V",
     "post": "Dispenser",
     "unit": "OPD",
     "phone": "0773456712",
@@ -29,8 +46,10 @@
   },
 
   {
+    "username": "andrea",
+    "password": "123",
     "name": "Andrea. K",
-    "NIC": "964567123V",
+    "nic": "964567123V",
     "post": "Admission Doctor",
     "unit": "OPD",
     "phone": "0774567123",
@@ -38,8 +57,10 @@
   },
 
   {
+    "username": "keerthi",
+    "password": "123",
     "name": "Keerthi. K",
-    "NIC": "965671234V",
+    "nic": "965671234V",
     "post": "OPD In Charge",
     "unit": "OPD",
     "phone": "0775671234",
@@ -49,9 +70,9 @@
   { "Patient": "" },
 
   {
-    "NIC": "961234567V",
+    "nic": "961234567V",
     "name": "John. S",
-    "DOB": "1980-08-24",
+    "dob": "1980-08-24",
     "gender": "male",
     "address": "Colombo",
     "phone": "0771234567",
@@ -59,39 +80,39 @@
   },
 
   {
-    "NIC": "962345671V",
+    "nic": "962345671V",
     "name": "Ann. S",
-    "DOB": "1965-08-05",
+    "dob": "1965-08-05",
     "gender": "female",
     "address": "Galle",
     "phone": "0772345671",
-    "stage": "OPD consulted"
+    "stage": "in_treatment"
   },
 
   {
-    "NIC": "963456712V",
+    "nic": "963456712V",
     "name": "Bill. S",
-    "DOB": "1985-08-24",
+    "dob": "1985-08-24",
     "gender": "male",
     "address": "Colombo",
     "phone": "0771234567",
-    "stage": "OPD prescribed"
+    "stage": "in_treatment"
   },
 
   {
-    "NIC": "964567123V",
+    "nic": "964567123V",
     "name": "Salman. S",
-    "DOB": "1995-08-24",
+    "dob": "1995-08-24",
     "gender": "male",
     "address": "Malabe",
     "phone": "0771234567",
-    "stage": "OPD issued"
+    "stage": "treated"
   },
 
   {
-    "NIC": "965671234V",
+    "nic": "965671234V",
     "name": "Krithik. S",
-    "DOB": "1992-08-24",
+    "dob": "1992-08-24",
     "gender": "male",
     "address": "Colombo",
     "phone": "0771234567",
@@ -99,23 +120,23 @@
   },
 
   {
-    "NIC": "9667812345V",
+    "nic": "9667812345V",
     "name": "Nikitha. S",
-    "DOB": "1997-08-24",
+    "dob": "1997-08-24",
     "gender": "female",
     "address": "Batticaloa",
     "phone": "0771234567",
-    "stage": "ward referenced"
+    "stage": "in_treatment"
   },
 
   {
-    "NIC": "9678123456V",
+    "nic": "9678123456V",
     "name": "Nithya. S",
-    "DOB": "1998-08-24",
+    "dob": "1998-08-24",
     "gender": "female",
     "address": "Colombo",
     "phone": "0771234567",
-    "stage": "ward admitted"
+    "stage": "in_treatment"
   },
 
   { "Consultation": "" },

@@ -23,6 +23,9 @@ const TcDashboard = () => {
           <PatientRegistrationForm />
         </div>
       </Box>
+      <button type="button" class="btn btn-primary">
+        Primary
+      </button>
     </div>
   );
 };

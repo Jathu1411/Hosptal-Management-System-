@@ -1,65 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Redirect,
-  Switch,
-} from "react-router-dom";
-import "./App.css";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-//import Login from "./account management/pages/Login";
-import TcDashboard from "./ticket clerk/pages/TcDashboard";
-// import TcMyAccount from "./ticket clerk/pages/TcMyAccount";
-import TcViewAllPatients from "./ticket clerk/pages/TcViewAllPatients";
-// import TcSearchAllPatients from "./ticket clerk/pages/TcSearchAllPatients";
-// import TcViewPatientDetails from "./ticket clerk/pages/TcViewPatientDetails";
-// import TcEditPatientDetails from "./ticket clerk/pages/TcEditPatientDetails";
+//Redirect, Switch,
+
+import Login from "./account management/pages/Login";
+
+import UserContext from "./context/UserContext";
 
 const App = () => {
+  const [userData, setUserData] = useState({
+    token: undefined,
+    user: undefined,
+  });
+
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      let token = localStorage.getItem("auth-token");
+      if (token === null) {
+        localStorage.setItem("auth-token", "");
+        token = "";
+      }
+      const tokenRes = await Axios.post(
+        "http://localhost:5000/api/users/tokenIsValid",
+        {},
+        { headers: { "x-auth-token": token } }
+      );
+      if (tokenRes.data) {
+        const userRes = await Axios.get("http://localhost:5000/api/users/", {
+          headers: { "x-auth-token": token },
+        });
+        setUserData({
+          token,
+          user: userRes.data,
+        });
+      }
+    };
+
+    checkLoggedIn();
+  }, []);
+
   return (
     <Router>
-      <Switch>
-        <Route path="/" exact>
-          <TcDashboard />
-        </Route>
-        <Route path="/opd_patients" exact>
-          <TcViewAllPatients />
-        </Route>
-        <Redirect to="/" />
-      </Switch>
+      <UserContext.Provider value={{ userData, setUserData }}>
+        <Switch>
+          <Route path="/" exact component={Login} />
+        </Switch>
+      </UserContext.Provider>
     </Router>
   );
 };
 
 export default App;
-
-/*
-login "/"
-
-Ticket clerk
-dashboard "/:uid"
-my account "/:uid/account"
-view all patients "/opd_patients"
-search all patients "/:nic/opd_patients"
-view patient details "/:nic/opd_details"
-edit patient details "/:nic/edit_opd_details"
-*/
-
-/*
-<Route path="/:uid" exact>
-          <TcDashboard />
-        </Route>
-<Route path="/:uid/account" exact>
-          <TcMyAccount />
-        </Route>
-        <Route path="/:nic/opd_patients" exact>
-          <TcSearchAllPatients />
-        </Route>
-        <Route path="/:nic/opd_details" exact>
-          <TcViewPatientDetails />
-        </Route>
-        <Route path="/:nic/edit_opd_details" exact>
-          <TcEditPatientDetails />
-</Route>
-*/

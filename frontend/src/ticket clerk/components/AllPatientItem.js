@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 
 import Button from "../../shared/components/Button";
 import "./AllPatientItem.css";
 
 const AllPatientItem = (props) => {
-  // const calcAge = (dob) => {
-  //   let today = new Date();
-  //   let birthDate = new Date(dob);
-  //   console.log(today.getFullYear() - birthDate.getFullYear());
-  //   return (today.getFullYear() - birthDate.getFullYear()).toString;
-  // };
+  const [redirect, setRedirect] = useState(null);
 
   return (
-    <tr>
+    <tr
+      onClick={() => {
+        setRedirect(`/opd_patients/:${props.nic}`);
+        console.log(redirect);
+      }}
+    >
+      {redirect ? <Redirect to={redirect} /> : null}
       <td>{props.name}</td>
       <td>{props.nic}</td>
       <td>
@@ -23,10 +25,14 @@ const AllPatientItem = (props) => {
       <td>{props.previousVisits}</td>
       <td>{props.lastVisit}</td>
       <td id="button_in_table">
-        <Button text="To consultation"></Button>
+        <a href="http://localhost:3000/">
+          <Button text="To consultation"></Button>
+        </a>
       </td>
       <td id="button_in_table">
-        <Button text="Edit"></Button>
+        <a href="http://localhost:3000/">
+          <Button text="Edit"></Button>
+        </a>
       </td>
     </tr>
   );
