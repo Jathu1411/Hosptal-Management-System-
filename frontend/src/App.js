@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
-//Redirect, Switch,
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 
 import Login from "./account management/pages/Login";
+import MainDashboard from "./shared/pages/MainDashboard";
 
 import UserContext from "./context/UserContext";
 
@@ -46,6 +50,8 @@ const App = () => {
       <UserContext.Provider value={{ userData, setUserData }}>
         <Switch>
           <Route path="/" exact component={Login} />
+          <Redirect from="/redirect_dashboard" to="/main-dashboard" />
+          <Route path="/main-dashboard" exact component={MainDashboard} />
         </Switch>
       </UserContext.Provider>
     </Router>

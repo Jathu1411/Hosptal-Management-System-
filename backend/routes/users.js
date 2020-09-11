@@ -20,7 +20,7 @@ add a user(done by EMS) - add a user
 */
 
 //get all users
-router.route("/all_users").get((req, res) => {
+router.route("/all_users").get(auth, (req, res) => {
   User.find()
     .then((users) => res.json(users))
     .catch((err) => res.status(400).json("Error: " + err));
