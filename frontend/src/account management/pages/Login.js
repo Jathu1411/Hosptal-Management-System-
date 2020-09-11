@@ -33,7 +33,26 @@ const Login = () => {
         user: loginRes.data.user,
       });
       localStorage.setItem("auth-token", loginRes.data.token);
-      history.push("/redirect_dashboard");
+      switch (`${loginRes.data.user.unit} ${loginRes.data.user.post}`) {
+        case "OPD Ticket Clerk":
+          history.push("/opd_tc_dashboard");
+          break;
+        case "OPD Consultion Doctor":
+          history.push("/opd_cd_dashboard");
+          break;
+        case "OPD Dispenser":
+          history.push("/opd_dis_dashboard");
+          break;
+        case "OPD Admission Doctor":
+          history.push("/opd_ad_dashboard");
+          break;
+        case "OPD OPD In Charge":
+          history.push("/opd_ic_dashboard");
+          break;
+
+        default:
+          history.push("/");
+      }
     } catch (err) {
       err.response.data.msg && setError(err.response.data.msg);
     }
