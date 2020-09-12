@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import userContext from "../../context/UserContext";
 import Axios from "axios";
@@ -11,7 +11,7 @@ import "./Login.css";
 import logo from "./LOGO_192.png";
 import ErrorNotice from "../../shared/components/ErrorNotice";
 
-const Login = () => {
+const Login = (props) => {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState();
@@ -32,11 +32,13 @@ const Login = () => {
         token: loginRes.data.token,
         user: loginRes.data.user,
       });
-      localStorage.setItem("auth-token", loginRes.data.token);
-      localStorage.setItem("username", loginRes.data.user.username);
-      localStorage.setItem("id", loginRes.data.user.id);
-      localStorage.setItem("unit", loginRes.data.user.unit);
-      localStorage.setItem("post", loginRes.data.user.post);
+      window.sessionStorage.setItem("auth-token", loginRes.data.token);
+      window.sessionStorage.setItem("username", loginRes.data.user.username);
+      window.sessionStorage.setItem("id", loginRes.data.user.id);
+      window.sessionStorage.setItem("unit", loginRes.data.user.unit);
+      window.sessionStorage.setItem("post", loginRes.data.user.post);
+      window.sessionStorage.setItem("error", undefined);
+
       switch (`${loginRes.data.user.unit} ${loginRes.data.user.post}`) {
         case "OPD Ticket Clerk":
           history.push("/opd_tc_dashboard");
@@ -60,6 +62,18 @@ const Login = () => {
       err.response.data.msg && setError(err.response.data.msg);
     }
   };
+
+  const checkLoginError = () => {
+    if (window.sessionStorage.getItem("error") !== undefined) {
+      if (window.sessionStorage.getItem("error") === "session") {
+        setError("Session expired, please login again");
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkLoginError();
+  }, []);
 
   return (
     <div style={{ height: "100vh" }}>

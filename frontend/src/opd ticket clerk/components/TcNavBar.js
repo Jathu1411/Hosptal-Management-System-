@@ -12,7 +12,7 @@ import logo from "../../account management/pages/LOGO_192.png";
 
 export default function TcNavBar() {
   const history = useHistory();
-  const username = localStorage.getItem("username");
+  const username = window.sessionStorage.getItem("username");
 
   const { setUserData } = useContext(userContext);
 
@@ -21,11 +21,11 @@ export default function TcNavBar() {
       token: undefined,
       user: undefined,
     });
-    localStorage.setItem("auth-token", "");
-    localStorage.setItem("username", "");
-    localStorage.setItem("id", "");
-    localStorage.setItem("unit", "");
-    localStorage.setItem("post", "");
+    window.sessionStorage.setItem("auth-token", "");
+    window.sessionStorage.setItem("username", "");
+    window.sessionStorage.setItem("id", "");
+    window.sessionStorage.setItem("unit", "");
+    window.sessionStorage.setItem("post", "");
     history.push("/");
   };
 
