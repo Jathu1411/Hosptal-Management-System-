@@ -1,6 +1,8 @@
 import React, { Component } from "react";
+import Axios from "axios";
 
 //import Container from "react-bootstrap/Container";
+import SuccessNotice from "../../shared/components/ErrorNotice";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -12,6 +14,8 @@ import Moment from "moment";
 export default class RegisterForm extends Component {
   constructor(props) {
     super(props);
+
+    Moment().utcOffset("+05:30");
 
     this.onChangeName = this.onChangeName.bind(this);
     this.onChangeNic = this.onChangeNic.bind(this);
@@ -28,7 +32,20 @@ export default class RegisterForm extends Component {
       gender: "",
       address: "",
       phone: "",
+      success: undefined,
     };
+  }
+
+  componentDidMount() {
+    // this.setState({
+    //   name: "",
+    //   nic: "",
+    //   dob: new Date(),
+    //   gender: "",
+    //   address: "",
+    //   phone: "",
+    // });
+    //console.log(this.state);
   }
 
   onChangeName(e) {
@@ -79,7 +96,29 @@ export default class RegisterForm extends Component {
       phone: this.state.phone,
     };
 
-    console.log(patient);
+    Axios.post("http://localhost:5000/api/opd_tc/add", patient).then((res) => {
+      //window.sessionStorage.setItem("success", res.data);
+      if (res.data === "success") {
+        this.setState({
+          success: "Patient registerd successfully",
+        });
+
+        this.setState({
+          name: "",
+          nic: "",
+          dob: new Date(),
+          gender: "",
+          address: "",
+          phone: "",
+        });
+
+        setTimeout(() => {
+          this.setState({
+            success: undefined,
+          });
+        }, 5000);
+      }
+    });
 
     //window.location = "/opd_tc_dashboard";
   }
@@ -87,10 +126,19 @@ export default class RegisterForm extends Component {
   render() {
     return (
       <div>
-        {console.log(this.state.name)}
+        {console.log(this.state)}
         <div style={{ paddingBottom: "10px" }}>
           <h3 className="h4">Register Patient</h3>
         </div>
+        {this.state.success !== "" && this.state.success !== undefined && (
+          <div style={{ paddingBottom: "5px" }}>
+            <SuccessNotice
+              variant="success"
+              msg={this.state.success}
+              clearError={() => this.setState({ success: "" })}
+            />
+          </div>
+        )}
         <Form onSubmit={this.onSubmit}>
           <Form.Group as={Row} controlId="formHorizontal">
             <Form.Label column sm={2}>
@@ -99,6 +147,7 @@ export default class RegisterForm extends Component {
             <Col sm={10}>
               <Form.Control
                 type="text"
+                value={this.state.name}
                 placeholder="Patient's name"
                 required
                 onChange={this.onChangeName}
@@ -113,6 +162,7 @@ export default class RegisterForm extends Component {
               <Form.Control
                 type="text"
                 required
+                value={this.state.nic}
                 placeholder="Patient's NIC number"
                 onChange={this.onChangeNic}
               />
@@ -173,6 +223,7 @@ export default class RegisterForm extends Component {
               <Form.Control
                 type="text"
                 required
+                value={this.state.address}
                 placeholder="Patient's address"
                 onChange={this.onChangeAddress}
               />
@@ -186,6 +237,7 @@ export default class RegisterForm extends Component {
               <Form.Control
                 type="text"
                 required
+                value={this.state.phone}
                 placeholder="Patient's contact number"
                 onChange={this.onChangePhone}
               />

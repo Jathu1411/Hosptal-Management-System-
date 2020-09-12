@@ -8,7 +8,7 @@ view all patients - get all patients
 - redirect to view all patients page
 search patients - get matching patients by nic
 - redirect to search results page
-register patient - add a patient
+****register patient - add a patient
 - redirect to dashboard
 view patient details - get a particular patient
 - redirect to view patient details page
@@ -37,7 +37,7 @@ router.route("/add").post((req, res) => {
   const gender = req.body.gender;
   const address = req.body.address;
   const phone = req.body.phone;
-  const stage = req.body.stage; //not needed when adding
+  //const stage = req.body.stage; //not needed when adding
   //const consultation = req.body.consultation; //not needed when adding
 
   const newPatient = new Patient({
@@ -47,12 +47,11 @@ router.route("/add").post((req, res) => {
     gender,
     address,
     phone,
-    stage,
   });
 
   newPatient
     .save()
-    .then(() => res.json("Patient added!"))
+    .then(() => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
