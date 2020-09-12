@@ -33,6 +33,10 @@ const Login = () => {
         user: loginRes.data.user,
       });
       localStorage.setItem("auth-token", loginRes.data.token);
+      localStorage.setItem("username", loginRes.data.user.username);
+      localStorage.setItem("id", loginRes.data.user.id);
+      localStorage.setItem("unit", loginRes.data.user.unit);
+      localStorage.setItem("post", loginRes.data.user.post);
       switch (`${loginRes.data.user.unit} ${loginRes.data.user.post}`) {
         case "OPD Ticket Clerk":
           history.push("/opd_tc_dashboard");
@@ -49,7 +53,6 @@ const Login = () => {
         case "OPD OPD In Charge":
           history.push("/opd_ic_dashboard");
           break;
-
         default:
           history.push("/");
       }
