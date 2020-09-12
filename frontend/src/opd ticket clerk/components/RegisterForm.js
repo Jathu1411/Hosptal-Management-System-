@@ -191,7 +191,7 @@ export default class RegisterForm extends Component {
               />
             </Col>
           </Form.Group>
-          <Button type="submit">Submit form</Button>
+          <Button type="submit">Register patient</Button>
         </Form>
       </div>
     );
