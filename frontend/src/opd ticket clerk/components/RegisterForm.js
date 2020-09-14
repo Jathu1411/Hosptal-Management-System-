@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import Axios from "axios";
 
-//import Container from "react-bootstrap/Container";
 import SuccessNotice from "../../shared/components/ErrorNotice";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+
 import Moment from "moment";
 
 export default class RegisterForm extends Component {
@@ -243,7 +241,9 @@ export default class RegisterForm extends Component {
               />
             </Col>
           </Form.Group>
-          <Button type="submit">Register patient</Button>
+          <Button type="submit" size="lg" block>
+            Register patient
+          </Button>
         </Form>
       </div>
     );

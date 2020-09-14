@@ -1,24 +1,25 @@
 const router = require("express").Router();
 let Patient = require("../models/patient.model");
+let Consultation = require("../models/consultation.model");
 
 const auth = require("../middleware/auth");
 
 /*Operation
-view all patients - get all patients
+****view all patients - get all patients ---- add pagination
 - redirect to view all patients page
-search patients - get matching patients by nic
+****search patients - get matching patients by nic
 - redirect to search results page
 ****register patient - add a patient
 - redirect to dashboard
-view patient details - get a particular patient
+****view patient details - get a particular patient
 - redirect to view patient details page
-update patient details  
+****update patient details  
 - update patient details of given patient id
 - redirect to view patient details
 add to the consultation -
 - update stage info of a given patient id
 - redirect to dashboard/view all patients
-delete patient - delete patient of a given patient id
+***delete patient - delete patient of a given patient id
 - redirect to dashboard
 */
 
@@ -26,6 +27,34 @@ delete patient - delete patient of a given patient id
 router.route("/all_patients").get(auth, (req, res) => {
   Patient.find()
     .then((patients) => res.json(patients))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get all matching patients by name
+router.route("/all_patients/name/:key").get((req, res) => {
+  Patient.find({ name: { $regex: req.params.key, $options: "i" } })
+    .then((patients) => res.json(patients))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get all matching patients by nic
+router.route("/all_patients/nic/:key").get((req, res) => {
+  Patient.find({ nic: { $regex: req.params.key, $options: "i" } })
+    .then((patients) => res.json(patients))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a patient
+router.route("/:id").get((req, res) => {
+  Patient.findById(req.params.id)
+    .then((patient) => res.json(patient))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a patient's consultations
+router.route("/consultations/:id").get((req, res) => {
+  Consultation.find({ patient: req.params.id })
+    .then((consultations) => res.json(consultations))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
@@ -55,13 +84,6 @@ router.route("/add").post((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-//get a patient
-router.route("/:id").get((req, res) => {
-  Patient.findById(req.params.id)
-    .then((patient) => res.json(patient))
-    .catch((err) => res.status(400).json("Error: " + err));
-});
-
 //update a patient
 router.route("/update/:id").post((req, res) => {
   Patient.findById(req.params.id)
@@ -72,11 +94,11 @@ router.route("/update/:id").post((req, res) => {
       patient.gender = req.body.gender;
       patient.address = req.body.address;
       patient.phone = req.body.phone;
-      patient.stage = req.body.stage;
+      // patient.stage = req.body.stage;
 
       patient
         .save()
-        .then(() => res.json("Patient updated"))
+        .then(() => res.json("success"))
         .catch((err) => res.status(400).json("Error: " + err));
     })
     .catch((err) => res.status(400).json("Error: " + err));
