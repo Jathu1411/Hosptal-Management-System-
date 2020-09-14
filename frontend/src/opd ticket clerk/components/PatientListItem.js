@@ -8,18 +8,32 @@ export default function ListItem(props) {
     return props.buttons.map((button, key) => {
       return (
         <td key={props.patient._id + key}>
-          {props.patient.stage === "in_treatment" &&
+          {(props.patient.stage === "in_treatment" ||
+            props.patient.stage === "registered") &&
           button.title === "To consultation" ? (
-            <Button
-              variant="primary"
-              disabled
-              onClick={(e) => {
-                e.stopPropagation();
-                button.onclick(props.patient._id);
-              }}
-            >
-              In treatment
-            </Button>
+            props.patient.stage === "in_treatment" ? (
+              <Button
+                variant="primary"
+                disabled
+                onClick={(e) => {
+                  e.stopPropagation();
+                  button.onclick(props.patient._id);
+                }}
+              >
+                In treatment
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                disabled
+                onClick={(e) => {
+                  e.stopPropagation();
+                  button.onclick(props.patient._id);
+                }}
+              >
+                In consultation
+              </Button>
+            )
           ) : (
             <Button
               variant="primary"

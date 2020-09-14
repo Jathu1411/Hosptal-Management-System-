@@ -144,15 +144,41 @@ export default class PatientDetails extends Component {
           <Row>
             <Col sm={4}>
               <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                <Button
-                  size="lg"
-                  block
-                  onClick={() => {
-                    this.props.toConsultation(this.props.patient._id);
-                  }}
-                >
-                  Add to the consultation
-                </Button>
+                {this.props.patient.stage === "registered" && (
+                  <Button
+                    size="lg"
+                    block
+                    disabled
+                    onClick={() => {
+                      this.props.toConsultation(this.props.patient._id);
+                    }}
+                  >
+                    In consultation
+                  </Button>
+                )}
+                {this.props.patient.stage === "in_treatment" && (
+                  <Button
+                    size="lg"
+                    block
+                    disabled
+                    onClick={() => {
+                      this.props.toConsultation(this.props.patient._id);
+                    }}
+                  >
+                    In treatment
+                  </Button>
+                )}
+                {this.props.patient.stage === "treated" && (
+                  <Button
+                    size="lg"
+                    block
+                    onClick={() => {
+                      this.props.toConsultation(this.props.patient._id);
+                    }}
+                  >
+                    Add to the consultation
+                  </Button>
+                )}
               </div>
             </Col>
             <Col sm={4}>

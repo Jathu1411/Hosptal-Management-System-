@@ -124,13 +124,13 @@ class TcRecords extends Component {
           console.log(res.data);
         });
         console.log(this.state.searchedPatients);
+        this.setComponent("search_result");
+        this.setPreviousComponent("start");
       })
       .catch((error) => {
         this.setComponent("start");
         console.log(error);
       });
-    this.setComponent("search_result");
-    this.setPreviousComponent("start");
   }
 
   //crud functions
@@ -164,14 +164,52 @@ class TcRecords extends Component {
   }
 
   toConsultation(id) {
-    // Axios.delete("http://localhost:5000/api/opd_tc/" + id).then((res) =>
-    //   console.log(res.data)
-    // );
-    // this.setState({
-    //   patients: this.state.patients.filter((element) => element._id !== id),
-    // });
-    //consultation login
-    console.log("consult" + id);
+    const token = window.sessionStorage.getItem("auth-token");
+    Axios.post("http://localhost:5000/api/opd_tc//consult/" + id, {
+      headers: { "x-auth-token": token },
+    })
+      .then((res) => {
+        Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
+          headers: { "x-auth-token": token },
+        })
+          .then((res) => {
+            this.setState({ patients: res.data }, () => {
+              let tempResults = [];
+              this.state.searchedPatients.map((searchResult) => {
+                if (searchResult._id === id) {
+                  tempResults.push(
+                    this.state.patients.find((element) => element._id === id)
+                  );
+                } else {
+                  tempResults.push(searchResult);
+                }
+              });
+              this.setState({ searchedPatients: tempResults });
+              const tempPatient = this.state.patients.find(
+                (element) => element._id === id
+              );
+              this.setState({ currentPatient: tempPatient });
+              if (this.state.currentComponent === "search_result") {
+                console.log(this.state.currentComponent); //
+                this.setComponent("search_result");
+              }
+              if (this.state.currentComponent === "start") {
+                this.setComponent("start");
+              }
+              if (this.state.currentComponent === "patient_details") {
+                this.setComponent("patient_details");
+              }
+            });
+
+            //console.log(this.state.patients);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   toEdit(id, from) {

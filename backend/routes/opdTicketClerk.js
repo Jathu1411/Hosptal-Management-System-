@@ -111,4 +111,11 @@ router.route("/:id").delete((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+//add a patient to consultation
+router.route("/consult/:id").post((req, res) => {
+  Patient.findByIdAndUpdate(req.params.id, { stage: "registered" })
+    .then((patient) => res.json("success"))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 module.exports = router;
