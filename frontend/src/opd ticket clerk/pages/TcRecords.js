@@ -42,7 +42,6 @@ class TcRecords extends Component {
     })
       .then((res) => {
         this.setState({ patients: res.data });
-        //console.log(this.state.patients);
       })
       .catch((error) => {
         console.log(error);
@@ -88,49 +87,50 @@ class TcRecords extends Component {
   }
 
   onSearchAllPatientsName(e) {
-    console.log(e.target.value);
-    const token = window.sessionStorage.getItem("auth-token");
-    Axios.get(
-      "http://localhost:5000/api/opd_tc/all_patients/name/" + e.target.value,
-      {
-        headers: { "x-auth-token": token },
-      }
-    )
-      .then((res) => {
-        this.setState({ searchedPatients: res.data }, () => {
-          console.log(res.data);
+    if (e.target.value.trim() !== "") {
+      const token = window.sessionStorage.getItem("auth-token");
+      Axios.get(
+        "http://localhost:5000/api/opd_tc/all_patients/name/" + e.target.value,
+        {
+          headers: { "x-auth-token": token },
+        }
+      )
+        .then((res) => {
+          this.setState({ searchedPatients: res.data });
+        })
+        .catch((error) => {
+          this.setComponent("start");
+          console.log(error);
         });
-        console.log(this.state.searchedPatients);
-      })
-      .catch((error) => {
-        this.setComponent("start");
-        console.log(error);
-      });
-    this.setComponent("search_result");
-    this.setPreviousComponent("start");
+      this.setComponent("search_result");
+      this.setPreviousComponent("start");
+    } else {
+      this.setComponent("start");
+    }
   }
 
   onSearchAllPatientsNic(e) {
-    console.log(e.target.value);
-    const token = window.sessionStorage.getItem("auth-token");
-    Axios.get(
-      "http://localhost:5000/api/opd_tc/all_patients/nic/" + e.target.value,
-      {
-        headers: { "x-auth-token": token },
-      }
-    )
-      .then((res) => {
-        this.setState({ searchedPatients: res.data }, () => {
-          console.log(res.data);
+    if (e.target.value.trim() !== "") {
+      console.log(e.target.value);
+      const token = window.sessionStorage.getItem("auth-token");
+      Axios.get(
+        "http://localhost:5000/api/opd_tc/all_patients/nic/" + e.target.value,
+        {
+          headers: { "x-auth-token": token },
+        }
+      )
+        .then((res) => {
+          this.setState({ searchedPatients: res.data });
+          this.setComponent("search_result");
+          this.setPreviousComponent("start");
+        })
+        .catch((error) => {
+          this.setComponent("start");
+          console.log(error);
         });
-        console.log(this.state.searchedPatients);
-        this.setComponent("search_result");
-        this.setPreviousComponent("start");
-      })
-      .catch((error) => {
-        this.setComponent("start");
-        console.log(error);
-      });
+    } else {
+      this.setComponent("start");
+    }
   }
 
   //crud functions
@@ -147,14 +147,13 @@ class TcRecords extends Component {
     const token = window.sessionStorage.getItem("auth-token");
     Axios.delete("http://localhost:5000/api/opd_tc/" + id, {
       headers: { "x-auth-token": token },
-    }).then((res) => console.log(res.data));
+    }).then((res) => console.log(res.data)); //change to success message
     this.setState({
       patients: this.state.patients.filter((element) => element._id !== id),
       searchedPatients: this.state.searchedPatients.filter(
         (element) => element._id !== id
       ),
     });
-    console.log("delete" + id);
     if (this.state.previousComponent === "search_result") {
       this.setComponent("search_result");
     }
@@ -175,7 +174,7 @@ class TcRecords extends Component {
           .then((res) => {
             this.setState({ patients: res.data }, () => {
               let tempResults = [];
-              this.state.searchedPatients.map((searchResult) => {
+              this.state.searchedPatients.forEach((searchResult) => {
                 if (searchResult._id === id) {
                   tempResults.push(
                     this.state.patients.find((element) => element._id === id)
@@ -190,7 +189,6 @@ class TcRecords extends Component {
               );
               this.setState({ currentPatient: tempPatient });
               if (this.state.currentComponent === "search_result") {
-                console.log(this.state.currentComponent); //
                 this.setComponent("search_result");
               }
               if (this.state.currentComponent === "start") {
@@ -200,8 +198,6 @@ class TcRecords extends Component {
                 this.setComponent("patient_details");
               }
             });
-
-            //console.log(this.state.patients);
           })
           .catch((error) => {
             console.log(error);
@@ -222,7 +218,6 @@ class TcRecords extends Component {
   }
 
   editFinish(id) {
-    console.log("delete");
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
       headers: { "x-auth-token": token },
