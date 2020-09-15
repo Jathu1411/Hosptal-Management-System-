@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Axios from "axios";
 
-import SuccessNotice from "../../shared/components/ErrorNotice";
+import SuccessNotice from "../../../shared/components/ErrorNotice";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -34,17 +34,7 @@ export default class RegisterForm extends Component {
     };
   }
 
-  componentDidMount() {
-    // this.setState({
-    //   name: "",
-    //   nic: "",
-    //   dob: new Date(),
-    //   gender: "",
-    //   address: "",
-    //   phone: "",
-    // });
-    //console.log(this.state);
-  }
+  componentDidMount() {}
 
   onChangeName(e) {
     this.setState({
@@ -94,8 +84,10 @@ export default class RegisterForm extends Component {
       phone: this.state.phone,
     };
 
-    Axios.post("http://localhost:5000/api/opd_tc/add", patient).then((res) => {
-      //window.sessionStorage.setItem("success", res.data);
+    const token = window.sessionStorage.getItem("auth-token");
+    Axios.post("http://localhost:5000/api/opd_tc/add", patient, {
+      headers: { "x-auth-token": token },
+    }).then((res) => {
       if (res.data === "success") {
         this.setState({
           success: "Patient registerd successfully",
@@ -117,14 +109,11 @@ export default class RegisterForm extends Component {
         }, 5000);
       }
     });
-
-    //window.location = "/opd_tc_dashboard";
   }
 
   render() {
     return (
       <div>
-        {console.log(this.state)}
         <div style={{ paddingBottom: "10px" }}>
           <h3 className="h4">Register Patient</h3>
         </div>

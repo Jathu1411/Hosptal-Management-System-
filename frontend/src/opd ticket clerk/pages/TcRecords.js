@@ -1,17 +1,15 @@
 import React, { Component } from "react";
 import Axios from "axios";
-//import { Switch, Route, withRouter } from "react-router-dom";
-
 import TcNavbar from "../components/TcNavBar";
 import Footer from "../../shared/components/Footer";
 import Container from "react-bootstrap/Container";
 
-//import SingleSearchBar from "../../shared/components/SingleSearchBar";
 import DoubleSearchBar from "../../shared/components/DoubleSearchBar";
-import AllPatientList from "../components/AllPatientsList";
-import SearchPatientList from "../components/SearchPatientList";
-import PatientDetails from "../components/PatientDetails";
-import EditPatientDetails from "../components/EditPatientDetails";
+import AllPatientList from "../components/records/AllPatientsList";
+import SearchPatientList from "../components/records/SearchPatientList";
+import PatientDetails from "../components/records/PatientDetails";
+import EditPatientDetails from "../components/records/EditPatientDetails";
+import SuccessNotice from "../../shared/components/ErrorNotice";
 
 class TcRecords extends Component {
   constructor(props) {
@@ -23,16 +21,19 @@ class TcRecords extends Component {
       patients: [],
       searchedPatients: [],
       currentPatient: undefined,
+      success: undefined,
     };
 
     this.onSearchAllPatientsNic = this.onSearchAllPatientsNic.bind(this);
     this.onSearchAllPatientsName = this.onSearchAllPatientsName.bind(this);
     this.setComponent = this.setComponent.bind(this);
+    this.setPreviousComponent = this.setPreviousComponent.bind(this);
     this.toConsultation = this.toConsultation.bind(this);
     this.toEdit = this.toEdit.bind(this);
     this.toViewPatientDetail = this.toViewPatientDetail.bind(this);
     this.toDeletePatient = this.toDeletePatient.bind(this);
     this.editFinish = this.editFinish.bind(this);
+    this.goToPrevious = this.goToPrevious.bind(this);
   }
 
   componentDidMount() {
@@ -75,17 +76,13 @@ class TcRecords extends Component {
       case "search_result":
         this.setState({ previousComponent: "search_result" });
         break;
-      case "patient_details":
-        this.setState({ previousComponent: "patient_details" });
-        break;
-      case "edit_patient":
-        this.setState({ currentComponent: "edit_patient" });
-        break;
       default:
         this.setState({ previousComponent: "start" });
     }
+    console.log(this.state.previousComponent);
   }
 
+  //search functions
   onSearchAllPatientsName(e) {
     if (e.target.value.trim() !== "") {
       const token = window.sessionStorage.getItem("auth-token");
@@ -144,30 +141,42 @@ class TcRecords extends Component {
   }
 
   toDeletePatient(id) {
+    let success = undefined;
     const token = window.sessionStorage.getItem("auth-token");
     Axios.delete("http://localhost:5000/api/opd_tc/" + id, {
       headers: { "x-auth-token": token },
-    }).then((res) => console.log(res.data)); //change to success message
-    this.setState({
-      patients: this.state.patients.filter((element) => element._id !== id),
-      searchedPatients: this.state.searchedPatients.filter(
-        (element) => element._id !== id
-      ),
+    }).then((res) => {
+      success = res.data;
+      this.setState({
+        patients: this.state.patients.filter((element) => element._id !== id),
+        searchedPatients: this.state.searchedPatients.filter(
+          (element) => element._id !== id
+        ),
+      });
+      if (success === "success") {
+        this.setComponent("start");
+
+        this.setState({
+          success: "Patient record deleted successfully",
+        });
+        console.log(this.state.success);
+        setTimeout(() => {
+          this.setState({
+            success: undefined,
+          });
+        }, 4000);
+      }
     });
-    if (this.state.previousComponent === "search_result") {
-      this.setComponent("search_result");
-    }
-    if (this.state.previousComponent === "start") {
-      this.setComponent("start");
-    }
   }
 
   toConsultation(id) {
+    let success = undefined;
     const token = window.sessionStorage.getItem("auth-token");
     Axios.post("http://localhost:5000/api/opd_tc//consult/" + id, {
       headers: { "x-auth-token": token },
     })
       .then((res) => {
+        success = res.data;
         Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
           headers: { "x-auth-token": token },
         })
@@ -197,6 +206,16 @@ class TcRecords extends Component {
               if (this.state.currentComponent === "patient_details") {
                 this.setComponent("patient_details");
               }
+              if (success === "success") {
+                this.setState({
+                  success: "Patient added to consultation successfully",
+                });
+                setTimeout(() => {
+                  this.setState({
+                    success: undefined,
+                  });
+                }, 4000);
+              }
             });
           })
           .catch((error) => {
@@ -212,7 +231,6 @@ class TcRecords extends Component {
     const patient = this.state.patients.find((patient) => patient._id === id);
 
     this.setState({ currentPatient: patient }, () => {
-      this.setPreviousComponent(from);
       this.setComponent("edit_patient");
     });
   }
@@ -233,8 +251,11 @@ class TcRecords extends Component {
     this.setState({ currentPatient: patient }, () => {
       this.setComponent("edit_patient");
     });
+  }
 
-    //this.setComponent("edit_patient");
+  //reverse button function
+  goToPrevious() {
+    this.setState({ currentComponent: this.state.previousComponent });
   }
 
   render() {
@@ -263,11 +284,19 @@ class TcRecords extends Component {
               <div></div>
             )}
             <Container>
+              {this.state.success !== "" && this.state.success !== undefined && (
+                <div style={{ paddingBottom: "5px" }}>
+                  <SuccessNotice
+                    variant="success"
+                    msg={this.state.success}
+                    clearError={() => this.setState({ success: "" })}
+                  />
+                </div>
+              )}
               {this.state.currentComponent === "start" ? (
                 <AllPatientList
                   patients={this.state.patients}
                   setComponent={this.setComponent}
-                  setPreviousComponent={this.setPreviousComponent}
                   toViewPatientDetail={this.toViewPatientDetail}
                   toConsultation={this.toConsultation}
                   toEdit={this.toEdit}
@@ -280,7 +309,6 @@ class TcRecords extends Component {
                 <SearchPatientList
                   patients={this.state.searchedPatients}
                   setComponent={this.setComponent}
-                  setPreviousComponent={this.setPreviousComponent}
                   toViewPatientDetail={this.toViewPatientDetail}
                   toConsultation={this.toConsultation}
                   toEdit={this.toEdit}
@@ -294,8 +322,8 @@ class TcRecords extends Component {
                 <div>
                   <PatientDetails
                     patient={this.state.currentPatient}
+                    goToPrevious={this.goToPrevious}
                     setComponent={this.setComponent}
-                    setPreviousComponent={this.setPreviousComponent}
                     toConsultation={this.toConsultation}
                     toEdit={this.toEdit}
                     toDeletePatient={this.toDeletePatient}
@@ -309,8 +337,8 @@ class TcRecords extends Component {
                 <div>
                   <EditPatientDetails
                     patient={this.state.currentPatient}
+                    goToPrevious={this.goToPrevious}
                     setComponent={this.setComponent}
-                    setPreviousComponent={this.setPreviousComponent}
                     toEdit={this.toEdit}
                     editFinish={this.editFinish}
                   />

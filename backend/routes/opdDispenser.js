@@ -1,5 +1,7 @@
 const router = require("express").Router();
+const mongoose = require("mongoose");
 let Patient = require("../models/patient.model");
+let Drug = require("../models/opdDrug.model");
 
 /*Operation
 dashboard - get all waiting patients
@@ -32,34 +34,34 @@ router.route("/all_patients").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-//add a patient - not needed
+//add a drug
 router.route("/add").post((req, res) => {
-  const nic = req.body.nic;
-  const name = req.body.name;
-  const dob = req.body.dob;
-  const gender = req.body.gender;
-  const address = req.body.address;
-  const phone = req.body.phone;
-  //const stage = req.body.stage; //not needed when adding
-  //const consultation = req.body.consultation; //not needed when adding
+  const drugName = req.body.drugName;
+  const drugType = req.body.drugType;
+  const availQuantity = req.body.availQuantity;
+  const unit = req.body.unit;
+  const dispenser = mongoose.Types.ObjectId(req.body.dispenser);
 
-  const newPatient = new Patient({
-    nic,
-    name,
-    dob,
-    gender,
-    address,
-    phone,
+  const newDrug = new Drug({
+    drugName,
+    drugType,
+    availQuantity,
+    unit,
   });
 
-  newPatient
+  newDrug.drugActions.push({
+    actionType: "add",
+    amount: availQuantity,
+    unit: unit,
+    balance: availQuantity,
+    remarks: "Added this drug to drug store",
+    dispenser: dispenser,
+  });
+
+  newDrug
     .save()
-    .then(() => res.json("Patient added!"))
+    .then(() => res.json("drug added!"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
-
-//update a patient
-
-//delete a patient
 
 module.exports = router;

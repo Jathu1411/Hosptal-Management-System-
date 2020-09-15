@@ -2,7 +2,7 @@ import React from "react";
 
 import Footer from "../../shared/components/Footer";
 import TcNavbar from "../components/TcNavBar";
-import RegisterForm from "../components/RegisterForm";
+import RegisterForm from "../components/dashboard/RegisterForm";
 import Container from "react-bootstrap/Container";
 
 const TcDashboard = () => {

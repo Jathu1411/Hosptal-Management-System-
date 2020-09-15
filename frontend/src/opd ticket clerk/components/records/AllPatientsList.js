@@ -12,7 +12,7 @@ export default class AllPatientsList extends Component {
     this.getPatientList = this.getPatientList.bind(this);
     this.setComponent = this.setComponent.bind(this);
     this.toConsultation = this.toConsultation.bind(this);
-    this.toEdit = this.toEdit.bind(this);
+
     this.toViewPatientDetail = this.toViewPatientDetail.bind(this);
     this.toDeletePatient = this.toDeletePatient.bind(this);
   }
@@ -32,10 +32,6 @@ export default class AllPatientsList extends Component {
     this.props.toConsultation(id);
   }
 
-  toEdit(id) {
-    this.props.toEdit(id);
-  }
-
   toDeletePatient(id) {
     this.props.toDeletePatient(id);
   }
@@ -45,10 +41,6 @@ export default class AllPatientsList extends Component {
       {
         title: "To consultation",
         onclick: this.toConsultation,
-      },
-      {
-        title: "Edit",
-        onclick: this.toEdit,
       },
     ];
     return this.props.patients.map((patient) => {
@@ -82,7 +74,6 @@ export default class AllPatientsList extends Component {
                   <th>Phone</th>
                   <th>Gender</th>
                   <th>To consultation</th>
-                  <th>Edit</th>
                 </tr>
               </thead>
               <tbody>{this.getPatientList()}</tbody>

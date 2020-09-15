@@ -8,7 +8,7 @@ require("dotenv").config();
 let User = require("../models/user.model");
 
 /*Operation
-login - find a particular user for a username
+****login - find a particular user for a username
 - verify password
 - redirect to relevant dashboard
 view account info - find a particular user by id

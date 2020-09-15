@@ -26,6 +26,8 @@ add to the consultation -
 //get all patients
 router.route("/all_patients").get(auth, (req, res) => {
   Patient.find()
+    .sort({ name: 1 })
+    .limit(20)
     .then((patients) => res.json(patients))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -33,6 +35,8 @@ router.route("/all_patients").get(auth, (req, res) => {
 //get all matching patients by name
 router.route("/all_patients/name/:key").get((req, res) => {
   Patient.find({ name: { $regex: req.params.key, $options: "i" } })
+    .sort({ name: 1 })
+    .limit(10)
     .then((patients) => res.json(patients))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -40,6 +44,8 @@ router.route("/all_patients/name/:key").get((req, res) => {
 //get all matching patients by nic
 router.route("/all_patients/nic/:key").get((req, res) => {
   Patient.find({ nic: { $regex: req.params.key, $options: "i" } })
+    .sort({ name: 1 })
+    .limit(10)
     .then((patients) => res.json(patients))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -66,8 +72,6 @@ router.route("/add").post((req, res) => {
   const gender = req.body.gender;
   const address = req.body.address;
   const phone = req.body.phone;
-  //const stage = req.body.stage; //not needed when adding
-  //const consultation = req.body.consultation; //not needed when adding
 
   const newPatient = new Patient({
     nic,
@@ -107,7 +111,7 @@ router.route("/update/:id").post((req, res) => {
 //delete a patient
 router.route("/:id").delete((req, res) => {
   Patient.findByIdAndDelete(req.params.id)
-    .then((patient) => res.json("Patient deleted"))
+    .then((patient) => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 

@@ -145,5 +145,34 @@
     "date": ""
   },
 
-  {}
+  {
+    "visTime": "2",
+    "diseaseState": "hi",
+    "disease": "hi",
+    "notes": "hi",
+    "patientId": "hi",
+    "consultant": "hi"
+  },
+
+  {
+    "drugName": "Madhukka",
+    "drugType": "syrup",
+    "availQuantity": "1500",
+    "unit": "ml",
+    "dispenser": "5f5b1b14cf74324818fe6bb4"
+  },
+  {
+    "drugName": "Arista",
+    "drugType": "syrup",
+    "availQuantity": "2000",
+    "unit": "ml",
+    "dispenser": "5f5b1b14cf74324818fe6bb4"
+  },
+  {
+    "drugName": "Chooranam",
+    "drugType": "powder",
+    "availQuantity": "2500",
+    "unit": "g",
+    "dispenser": "5f5b1b14cf74324818fe6bb4"
+  }
 ]

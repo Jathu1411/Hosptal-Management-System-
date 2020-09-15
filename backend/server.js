@@ -26,18 +26,18 @@ connection.once("open", () => {
 //import created routes here
 const usersRouter = require("./routes/users");
 const opdTicketClerkRouter = require("./routes/opdTicketClerk");
-// const opdConsultantRouter = require("./routes/opdConsultant");
-// const opdDispenserRouter = require("./routes/opdDispenser");
-// const opdInchargeRouter = require("./routes/opdIncharge");
+const opdConsultantRouter = require("./routes/opdConsultant");
+const opdDispenserRouter = require("./routes/opdDispenser");
 // const admissionDoctorRouter = require("./routes/admissionDoctor");
+// const opdInchargeRouter = require("./routes/opdIncharge");
 
 //assign routes to use
 app.use("/api/users", usersRouter);
 app.use("/api/opd_tc", opdTicketClerkRouter);
-// app.use("/opd_consultant", opdConsultantRouter);
-// app.use("/opd_dispenser", opdDispenserRouter);
-// app.use("/opd_incharge", opdInchargeRouter);
+app.use("/api/opd_consultant", opdConsultantRouter);
+app.use("/api/opd_dispenser", opdDispenserRouter);
 // app.use("/admission", admissionDoctorRouter);
+// app.use("/opd_incharge", opdInchargeRouter);
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);

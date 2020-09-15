@@ -3,11 +3,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-export default function ConfirmationModal(props) {
-  const toDeletePatient = () => {
-    props.todeletepatient(props.patientid);
-  };
-
+export default function NoticeModal(props) {
   return (
     <Modal
       {...props}
@@ -27,7 +23,6 @@ export default function ConfirmationModal(props) {
         <Button variant="secondary" onClick={props.onHide}>
           Close
         </Button>
-        <Button onClick={toDeletePatient}>Confirm</Button>
       </Modal.Footer>
     </Modal>
   );

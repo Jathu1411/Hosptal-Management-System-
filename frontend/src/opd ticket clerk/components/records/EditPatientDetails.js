@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Axios from "axios";
+import MediaQuery from "react-responsive";
 
-import SuccessNotice from "../../shared/components/ErrorNotice";
+import SuccessNotice from "../../../shared/components/ErrorNotice";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -36,14 +37,26 @@ export default class RegisterForm extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      name: this.props.patient.name,
-      nic: this.props.patient.nic,
-      dob: this.props.patient.dob,
-      gender: this.props.patient.gender,
-      address: this.props.patient.address,
-      phone: this.props.patient.phone,
-    });
+    const token = window.sessionStorage.getItem("auth-token");
+    let patient = undefined;
+    Axios.get("http://localhost:5000/api/opd_tc/" + this.props.patient._id, {
+      headers: { "x-auth-token": token },
+    })
+      .then((res) => {
+        patient = res.data;
+        console.log(patient);
+        this.setState({
+          name: patient.name,
+          nic: patient.nic,
+          dob: patient.dob,
+          gender: patient.gender,
+          address: patient.address,
+          phone: patient.phone,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   onChangeName(e) {
@@ -102,7 +115,6 @@ export default class RegisterForm extends Component {
         headers: { "x-auth-token": token },
       }
     ).then((res) => {
-      //window.sessionStorage.setItem("success", res.data);
       if (res.data === "success") {
         this.setState({
           success: "Patient updated successfully",
@@ -117,16 +129,34 @@ export default class RegisterForm extends Component {
         }, 5000);
       }
     });
-
-    //window.location = "/opd_tc_dashboard";
   }
 
   render() {
     return (
       <div>
-        {console.log(this.state)}
-        <Container className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 className="h3">Edit Patient Details {this.props.patient.name}</h1>
+        <Container>
+          <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <MediaQuery minDeviceWidth={1200}>
+              <h1 className="h3">
+                Edit Patient Details {this.props.patient.name}
+              </h1>
+            </MediaQuery>
+            <MediaQuery maxDeviceWidth={1200}>
+              <h1 className="h3">
+                Edit Patient Details <br />
+                {this.props.patient.name}
+              </h1>
+            </MediaQuery>
+            <div className="btn-toolbar mb-2 mb-md-0">
+              <Button
+                onClick={() => {
+                  this.props.setComponent("patient_details");
+                }}
+              >
+                &lt; Back
+              </Button>
+            </div>
+          </div>
         </Container>
         <Container>
           {this.state.success !== "" && this.state.success !== undefined && (

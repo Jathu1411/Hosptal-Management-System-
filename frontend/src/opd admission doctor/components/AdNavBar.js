@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useHistory, Link } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -15,6 +16,16 @@ export default function DisNavBar() {
   const username = window.sessionStorage.getItem("username");
 
   const { setUserData } = useContext(userContext);
+
+  const isMobileDevice = useMediaQuery({
+    query: "(max-device-width: 1200px)",
+  });
+
+  const isDesktopDevice = useMediaQuery({
+    query: "(min-device-width: 1200px)",
+  });
+
+  const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
 
   const logout = () => {
     setUserData({
@@ -49,9 +60,22 @@ export default function DisNavBar() {
             className="mr-3"
           />
         </Link>
-        <Navbar.Brand href="/opd_ad_dashboard">
-          Siddha Ayrvedic Base Hospital
-        </Navbar.Brand>
+
+        {isDesktopDevice && (
+          <Navbar.Brand href="/opd_ad_dashboard">
+            Siddha Ayrvedic Base Hospital
+          </Navbar.Brand>
+        )}
+
+        {isMobileDevice &&
+          (isPortrait ? (
+            <Navbar.Brand href="/opd_ad_dashboard">SABH</Navbar.Brand>
+          ) : (
+            <Navbar.Brand href="/opd_ad_dashboard">
+              Siddha Ayrvedic Base Hospital
+            </Navbar.Brand>
+          ))}
+
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ml-auto">
