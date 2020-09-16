@@ -10,6 +10,7 @@ import Container from "react-bootstrap/Container";
 
 import SuccessNotice from "../../../shared/components/ErrorNotice";
 import ValidationModal from "../../../shared/components/NoticeModal";
+import VisitDetails from "./VisitDetails";
 
 import Moment from "moment";
 
@@ -25,6 +26,9 @@ export default class ConsultForm extends Component {
     this.onSubmitPrescribe = this.onSubmitPrescribe.bind(this);
     this.onSubmitRefClinic = this.onSubmitRefClinic.bind(this);
     this.onSubmitRefWard = this.onSubmitRefWard.bind(this);
+    this.setComponent = this.setComponent.bind(this);
+    this.viewVisit = this.viewVisit.bind(this);
+    this.getVisits = this.getVisits.bind(this);
 
     this.state = {
       patient: {},
@@ -38,6 +42,7 @@ export default class ConsultForm extends Component {
       success: undefined,
       modalShow: false,
       modalMessage: "",
+      currentComponent: "start",
     };
   }
 
@@ -69,6 +74,19 @@ export default class ConsultForm extends Component {
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  setComponent(changeTo) {
+    switch (changeTo) {
+      case "start":
+        this.setState({ currentComponent: "start" });
+        break;
+      case "view_visit":
+        this.setState({ currentComponent: "view_visit" });
+        break;
+      default:
+        this.setState({ currentComponent: "start" });
+    }
   }
 
   //onchange functions
@@ -242,12 +260,23 @@ export default class ConsultForm extends Component {
     }
   }
 
+  viewVisit(patientId, consultationId) {
+    this.setState({ patientId: patientId, consultationId: consultationId });
+    this.setComponent("view_visit");
+  }
+
   //elements return functions
   getVisits() {
     if (this.state.consultations.length !== 0) {
       return this.state.consultations.map((consultation, i) => {
         return (
-          <Row key={i + 1} style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+          <Row
+            key={i + 1}
+            style={{ paddingTop: "2px", paddingBottom: "2px" }}
+            onClick={() =>
+              this.viewVisit(this.state.patient._id, consultation._id)
+            }
+          >
             <Col sm={2}>Visit {i + 1}</Col>
             <Col sm={10}>
               {Moment(consultation.date).format("DD/MM/YYYY HH:mm")}
@@ -267,184 +296,196 @@ export default class ConsultForm extends Component {
   render() {
     return (
       <div>
-        <Container>
-          <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <MediaQuery minDeviceWidth={1200}>
-              <h1 className="h3">Consulting {this.props.patient.name}</h1>
-            </MediaQuery>
-            <MediaQuery maxDeviceWidth={1200}>
-              <h1 className="h3">
-                Consulting <br />
-                {this.props.patient.name}
-              </h1>
-            </MediaQuery>
-
-            <div className="btn-toolbar mb-2 mb-md-0">
-              <Button
-                onClick={() => {
-                  this.props.setComponent("dashboard");
-                }}
-              >
-                &lt; Back
-              </Button>
-            </div>
+        {this.state.currentComponent === "view_visit" ? (
+          <div>
+            <VisitDetails
+              patientId={this.state.patientId}
+              consultationId={this.state.consultationId}
+              setComponent={this.setComponent}
+            />
           </div>
-        </Container>
+        ) : (
+          <div>
+            <Container>
+              <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <MediaQuery minDeviceWidth={1200}>
+                  <h1 className="h3">Consulting {this.props.patient.name}</h1>
+                </MediaQuery>
+                <MediaQuery maxDeviceWidth={1200}>
+                  <h1 className="h3">
+                    Consulting <br />
+                    {this.props.patient.name}
+                  </h1>
+                </MediaQuery>
 
-        <Container>
-          <div style={{ fontSize: "1.1rem" }}>
-            <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Name</Col>
-              <Col sm={10}>{this.state.patient.name}</Col>
-            </Row>
-            <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>NIC number</Col>
-              <Col sm={10}>{this.state.patient.nic}</Col>
-            </Row>
-            <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Age</Col>
-              <Col sm={10}>
-                {Moment().diff(this.state.patient.dob, "years")}
-              </Col>
-            </Row>
+                <div className="btn-toolbar mb-2 mb-md-0">
+                  <Button
+                    onClick={() => {
+                      this.props.setComponent("dashboard");
+                    }}
+                  >
+                    &lt; Back
+                  </Button>
+                </div>
+              </div>
+            </Container>
 
-            <hr />
-            <div style={{ paddingBottom: "10px" }}>
-              <h3 className="h4">Previous visits</h3>
-            </div>
-            {this.getVisits()}
-          </div>
-          <hr />
-        </Container>
+            <Container>
+              <div style={{ fontSize: "1.1rem" }}>
+                <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                  <Col sm={2}>Name</Col>
+                  <Col sm={10}>{this.state.patient.name}</Col>
+                </Row>
+                <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                  <Col sm={2}>NIC number</Col>
+                  <Col sm={10}>{this.state.patient.nic}</Col>
+                </Row>
+                <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                  <Col sm={2}>Age</Col>
+                  <Col sm={10}>
+                    {Moment().diff(this.state.patient.dob, "years")}
+                  </Col>
+                </Row>
 
-        <Container>
-          {this.state.success !== "" && this.state.success !== undefined && (
-            <div style={{ paddingBottom: "5px" }}>
-              <SuccessNotice
-                variant="success"
-                msg={this.state.success}
-                clearError={() => this.setState({ success: "" })}
-              />
-            </div>
-          )}
-          <div style={{ paddingBottom: "10px" }}>
-            <h3 className="h4">Consultation form</h3>
-          </div>
-          <Form onSubmit={(e) => e.preventDefault()}>
-            <Form.Group as={Row} controlId="formHorizontal">
-              <Form.Label column sm={2}>
-                Disease
-              </Form.Label>
-              <Col sm={10}>
-                <Form.Control
-                  type="text"
-                  value={this.state.disease}
-                  placeholder="Patient's illness/disease type"
-                  required
-                  onChange={this.onChangeDisease}
-                />
-              </Col>
-            </Form.Group>
-            <fieldset>
-              <Form.Group as={Row} controlId="formHorizontal">
-                <Form.Label column sm={2}>
-                  Disease state
-                </Form.Label>
-                <Col sm={10}>
-                  <div key="inline-radio" className="mt-1">
-                    <Form.Check
-                      inline
-                      label="Mild"
-                      type="radio"
+                <hr />
+                <div style={{ paddingBottom: "10px" }}>
+                  <h3 className="h4">Previous visits</h3>
+                </div>
+                {this.getVisits()}
+              </div>
+              <hr />
+            </Container>
+
+            <Container>
+              {this.state.success !== "" && this.state.success !== undefined && (
+                <div style={{ paddingBottom: "5px" }}>
+                  <SuccessNotice
+                    variant="success"
+                    msg={this.state.success}
+                    clearError={() => this.setState({ success: "" })}
+                  />
+                </div>
+              )}
+              <div style={{ paddingBottom: "10px" }}>
+                <h3 className="h4">Consultation form</h3>
+              </div>
+              <Form onSubmit={(e) => e.preventDefault()}>
+                <Form.Group as={Row} controlId="formHorizontal">
+                  <Form.Label column sm={2}>
+                    Disease
+                  </Form.Label>
+                  <Col sm={10}>
+                    <Form.Control
+                      type="text"
+                      value={this.state.disease}
+                      placeholder="Patient's illness/disease type"
                       required
-                      name="diseaseState"
-                      value="mild"
-                      checked={this.state.diseaseState === "mild"}
-                      onChange={this.onChangeDiseaseState}
-                      id="inline-radio-1"
+                      onChange={this.onChangeDisease}
                     />
-                    <Form.Check
-                      inline
-                      label="Severe"
-                      type="radio"
-                      required
-                      name="diseaseState"
-                      value="severe"
-                      checked={this.state.diseaseState === "severe"}
-                      onChange={this.onChangeDiseaseState}
-                      id="inline-radio-2"
+                  </Col>
+                </Form.Group>
+                <fieldset>
+                  <Form.Group as={Row} controlId="formHorizontal">
+                    <Form.Label column sm={2}>
+                      Disease state
+                    </Form.Label>
+                    <Col sm={10}>
+                      <div key="inline-radio" className="mt-1">
+                        <Form.Check
+                          inline
+                          label="Mild"
+                          type="radio"
+                          required
+                          name="diseaseState"
+                          value="mild"
+                          checked={this.state.diseaseState === "mild"}
+                          onChange={this.onChangeDiseaseState}
+                          id="inline-radio-1"
+                        />
+                        <Form.Check
+                          inline
+                          label="Severe"
+                          type="radio"
+                          required
+                          name="diseaseState"
+                          value="severe"
+                          checked={this.state.diseaseState === "severe"}
+                          onChange={this.onChangeDiseaseState}
+                          id="inline-radio-2"
+                        />
+                      </div>
+                    </Col>
+                  </Form.Group>
+                </fieldset>
+                <Form.Group as={Row} controlId="formHorizontal">
+                  <Form.Label column sm={2}>
+                    Notes
+                  </Form.Label>
+                  <Col sm={10}>
+                    <Form.Control
+                      as="textarea"
+                      rows="4"
+                      value={this.state.notes}
+                      placeholder="Consultation notes"
+                      onChange={this.onChangeNotes}
                     />
-                  </div>
-                </Col>
-              </Form.Group>
-            </fieldset>
-            <Form.Group as={Row} controlId="formHorizontal">
-              <Form.Label column sm={2}>
-                Notes
-              </Form.Label>
-              <Col sm={10}>
-                <Form.Control
-                  as="textarea"
-                  rows="4"
-                  value={this.state.notes}
-                  placeholder="Consultation notes"
-                  onChange={this.onChangeNotes}
-                />
-              </Col>
-              <Container style={{ textAlign: "center", paddingTop: "3px" }}>
-                <Form.Text className="text-muted">
-                  These informations cannot be changed changed later, make sure
-                  these are correct before proceeding.
-                </Form.Text>
-              </Container>
-            </Form.Group>
+                  </Col>
+                  <Container style={{ textAlign: "center", paddingTop: "3px" }}>
+                    <Form.Text className="text-muted">
+                      These informations cannot be changed changed later, make
+                      sure these are correct before proceeding.
+                    </Form.Text>
+                  </Container>
+                </Form.Group>
 
-            <Row>
-              <Col sm={4}>
-                <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    block
-                    onClick={this.onSubmitPrescribe}
-                  >
-                    Prescribe
-                  </Button>
-                </div>
-              </Col>
-              <Col sm={4}>
-                <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    block
-                    onClick={this.onSubmitRefClinic}
-                  >
-                    Reference to clinic
-                  </Button>
-                </div>
-              </Col>
-              <Col sm={4}>
-                <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                  <Button
-                    size="lg"
-                    block
-                    type="submit"
-                    onClick={this.onSubmitRefWard}
-                  >
-                    Reference to ward
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </Form>
-        </Container>
-        <ValidationModal
-          show={this.state.modalShow}
-          onHide={() => this.setState({ modalShow: false })}
-          title="Required fields!"
-          message={this.state.modalMessage}
-        />
+                <Row>
+                  <Col sm={4}>
+                    <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                      <Button
+                        type="submit"
+                        size="lg"
+                        block
+                        onClick={this.onSubmitPrescribe}
+                      >
+                        Prescribe
+                      </Button>
+                    </div>
+                  </Col>
+                  <Col sm={4}>
+                    <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                      <Button
+                        type="submit"
+                        size="lg"
+                        block
+                        onClick={this.onSubmitRefClinic}
+                      >
+                        Reference to clinic
+                      </Button>
+                    </div>
+                  </Col>
+                  <Col sm={4}>
+                    <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                      <Button
+                        size="lg"
+                        block
+                        type="submit"
+                        onClick={this.onSubmitRefWard}
+                      >
+                        Reference to ward
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              </Form>
+            </Container>
+            <ValidationModal
+              show={this.state.modalShow}
+              onHide={() => this.setState({ modalShow: false })}
+              title="Required fields!"
+              message={this.state.modalMessage}
+            />
+          </div>
+        )}
       </div>
     );
   }

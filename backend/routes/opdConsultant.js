@@ -197,6 +197,13 @@ router.route("/prescribe/:conId").post((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+//get a clinic references
+router.route("/crefs/:conId").get((req, res) => {
+  ClinicReference.findOne({ consultation: req.params.conId })
+    .then((clinicReference) => res.json(clinicReference))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 //get all clinic references - not needed
 router.route("/all_crefs").get((req, res) => {
   ClinicReference.find()
