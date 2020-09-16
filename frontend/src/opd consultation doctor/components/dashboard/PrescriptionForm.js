@@ -10,8 +10,10 @@ import Container from "react-bootstrap/Container";
 
 import SuccessNotice from "../../../shared/components/ErrorNotice";
 import SingleSearchBar from "../../../shared/components/SingleSearchBar";
+import SearchedDrugList from "./searchedDrugList";
 
 import Moment from "moment";
+import PrescribedList from "./PrescribedList";
 
 export default class PrescriptionForm extends Component {
   constructor(props) {
@@ -19,13 +21,20 @@ export default class PrescriptionForm extends Component {
 
     Moment().utcOffset("+05:30");
 
-    this.onChangeDisease = this.onChangeDisease.bind(this);
+    //this.onChangeDisease = this.onChangeDisease.bind(this);
+    this.setComponent = this.setComponent.bind(this);
+    this.onSearchDrug = this.onSearchDrug.bind(this);
+    this.toAddDrug = this.toAddDrug.bind(this);
+    this.toRemoveDrug = this.toRemoveDrug.bind(this);
+    this.onSubmitPrescribe = this.onSubmitPrescribe.bind(this);
 
     this.state = {
       patient: {},
       consultation: {},
-      prescripiton: [],
+      prescription: [],
       drugs: [],
+      searchedDrugs: [],
+      currentComponent: "",
     };
   }
 
@@ -68,52 +77,90 @@ export default class PrescriptionForm extends Component {
       });
   }
 
-  //onchange functions
-  onChangeDisease(e) {
-    this.setState({
-      disease: e.target.value,
-    });
+  //navigation functions
+  setComponent(changeTo) {
+    switch (changeTo) {
+      case "start":
+        this.setState({ currentComponent: "start" });
+        break;
+      case "drug_result":
+        this.setState({ currentComponent: "drug_result" });
+        break;
+      default:
+        this.setState({ currentComponent: "dashboard" });
+    }
   }
 
   //onsubmit funcitons
   onSubmitPrescribe() {
-    let visitNumber = 0;
-    if (
-      this.state.consultations === undefined ||
-      this.state.consultations === [] ||
-      this.state.consultations === null
-    ) {
-      visitNumber = 1;
-    } else {
-      visitNumber = this.state.consultations.length + 1;
-    }
-    const consultation = {
-      visTime: visitNumber,
-      diseaseState: this.state.diseaseState,
-      disease: this.state.disease,
-      notes: this.state.notes,
-      patientId: this.state.patient._id,
-      consultant: window.sessionStorage.getItem("id"),
-    };
-
+    const prescription = this.state.prescription;
     const token = window.sessionStorage.getItem("auth-token");
-    Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
-      headers: { "x-auth-token": token },
-    }).then((res) => {
+    Axios.post(
+      "http://localhost:5000/api/opd_consultant/prescribe/" +
+        this.state.consultation._id,
+      prescription,
+      {
+        headers: { "x-auth-token": token },
+      }
+    ).then((res) => {
       this.setState({
-        success: "Patient consulted successfully",
+        success: "Prescription added successfully",
       });
       setTimeout(() => {
         this.setState({
           success: undefined,
         });
-        this.props.toPrescribe(res.data);
+        this.props.setComponent("dashboard");
       }, 2000);
     });
   }
 
   //search functions
-  onSearchDrug() {}
+  onSearchDrug(e) {
+    if (e.target.value.trim() !== "") {
+      const token = window.sessionStorage.getItem("auth-token");
+      Axios.get(
+        "http://localhost:5000/api/opd_consultant/prescribe/drugs/" +
+          e.target.value,
+        {
+          headers: { "x-auth-token": token },
+        }
+      )
+        .then((res) => {
+          this.setState({ searchedDrugs: res.data });
+          this.setComponent("drug_result");
+        })
+        .catch((error) => {
+          this.setComponent("start");
+          console.log(error);
+        });
+    } else {
+      this.setComponent("start");
+    }
+  }
+
+  toAddDrug(drug, amount) {
+    const newDrug = {
+      drugName: drug.drugName,
+      quantity: amount,
+      unit: drug.unit,
+      key: Date.now(),
+    };
+
+    const newPrescription = [...this.state.prescription, newDrug];
+
+    this.setState({ prescription: newPrescription });
+
+    // console.log(drug);
+    // console.log(amount);
+  }
+
+  toRemoveDrug(key) {
+    const newPrescription = this.state.prescription.filter(
+      (drug) => drug.key !== key
+    );
+    this.setState({ prescription: newPrescription });
+  }
 
   render() {
     return (
@@ -129,16 +176,6 @@ export default class PrescriptionForm extends Component {
                 {this.props.patient.name}
               </h1>
             </MediaQuery>
-
-            <div className="btn-toolbar mb-2 mb-md-0">
-              <Button
-                onClick={() => {
-                  this.props.setComponent("consulting");
-                }}
-              >
-                &lt; Back
-              </Button>
-            </div>
           </div>
         </Container>
 
@@ -193,7 +230,7 @@ export default class PrescriptionForm extends Component {
             <h3 className="h5">Prescription information</h3>
           </div>
 
-          {this.state.prescripiton.length === 0 ? (
+          {this.state.prescription.length === 0 ? (
             <div
               style={{
                 textAlign: "center",
@@ -204,7 +241,10 @@ export default class PrescriptionForm extends Component {
               <h3 className="h6">No drugs prescribed yet</h3>
             </div>
           ) : (
-            <div></div>
+            <PrescribedList
+              drugs={this.state.prescription}
+              toRemoveDrug={this.toRemoveDrug}
+            />
           )}
 
           <hr />
@@ -216,7 +256,16 @@ export default class PrescriptionForm extends Component {
             />
           </div>
 
-          <Button type="submit" size="lg" block>
+          {this.state.currentComponent === "drug_result" ? (
+            <SearchedDrugList
+              drugs={this.state.searchedDrugs}
+              toAddDrug={this.toAddDrug}
+            />
+          ) : (
+            <div></div>
+          )}
+
+          <Button onClick={this.onSubmitPrescribe} pe="submit" size="lg" block>
             Complete prescribing
           </Button>
         </Container>

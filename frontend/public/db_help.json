@@ -174,5 +174,18 @@
     "availQuantity": "2500",
     "unit": "g",
     "dispenser": "5f5b1b14cf74324818fe6bb4"
+  },
+
+  {
+    "drugName": "hello",
+    "quantity": 20,
+    "unit": "ml",
+    "key": "x"
+  },
+  {
+    "drugName": "hello2",
+    "quantity": 202,
+    "unit": "g",
+    "key": "y"
   }
 ]

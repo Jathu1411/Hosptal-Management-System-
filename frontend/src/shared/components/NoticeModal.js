@@ -7,7 +7,7 @@ export default function NoticeModal(props) {
   return (
     <Modal
       {...props}
-      size="lg"
+      size="sm"
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >

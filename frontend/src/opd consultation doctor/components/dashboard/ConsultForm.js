@@ -37,6 +37,7 @@ export default class ConsultForm extends Component {
       consultant: "",
       success: undefined,
       modalShow: false,
+      modalMessage: "",
     };
   }
 
@@ -91,7 +92,15 @@ export default class ConsultForm extends Component {
 
   //onsubmit funcitons
   onSubmitPrescribe(e) {
-    if (this.state.disease === "" || this.state.diseaseState === "") {
+    if (this.state.disease.trim() === "") {
+      this.setState({
+        modalMessage: "Disease information is mandatory",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.diseaseState.trim() === "") {
+      this.setState({
+        modalMessage: "Disease state information is mandatory",
+      });
       this.setState({ modalShow: true });
     } else {
       let visitNumber = 0;
@@ -131,7 +140,15 @@ export default class ConsultForm extends Component {
   }
 
   onSubmitRefClinic() {
-    if (this.state.disease === "" || this.state.diseaseState === "") {
+    if (this.state.disease.trim() === "") {
+      this.setState({
+        modalMessage: "Disease information is mandatory",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.diseaseState.trim() === "") {
+      this.setState({
+        modalMessage: "Disease state information is mandatory",
+      });
       this.setState({ modalShow: true });
     } else {
       let visitNumber = 0;
@@ -171,7 +188,15 @@ export default class ConsultForm extends Component {
   }
 
   onSubmitRefWard() {
-    if (this.state.disease === "" || this.state.diseaseState === "") {
+    if (this.state.disease.trim() === "") {
+      this.setState({
+        modalMessage: "Disease information is mandatory",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.diseaseState.trim() === "") {
+      this.setState({
+        modalMessage: "Disease state information is mandatory",
+      });
       this.setState({ modalShow: true });
     } else {
       let visitNumber = 0;
@@ -418,7 +443,7 @@ export default class ConsultForm extends Component {
           show={this.state.modalShow}
           onHide={() => this.setState({ modalShow: false })}
           title="Required fields!"
-          message="Disease and disease state information are mandatory"
+          message={this.state.modalMessage}
         />
       </div>
     );

@@ -164,6 +164,36 @@ router.route("/consultation/:conId").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+//get all matching opd drugs
+router.route("/prescribe/drugs/:key").get((req, res) => {
+  OpdDrug.find({ drugName: { $regex: req.params.key, $options: "i" } })
+    .sort({ drugName: 1 })
+    .limit(10)
+    .then((drugs) => res.json(drugs))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//add a prescription to consultation
+router.route("/prescribe/:conId").post((req, res) => {
+  Consultation.findById(req.params.conId)
+    .then((consultation) => {
+      const drugArr = req.body;
+      drugArr.forEach((drug) => {
+        consultation.drugs.push({
+          drugName: drug.drugName,
+          quantity: drug.quantity,
+          unit: drug.unit,
+          state: "pending",
+        });
+      });
+      consultation
+        .save()
+        .then(() => res.json("success"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 //get all clinic references - not needed
 router.route("/all_crefs").get((req, res) => {
   ClinicReference.find()
