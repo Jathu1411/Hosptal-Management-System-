@@ -9,6 +9,7 @@ import AllWaitingPatientList from "../components/dashboard/AllWaitingPatientList
 import SearchWaitingPatientList from "../components/dashboard/SearchWaitingPatientList";
 import ConsultForm from "../components/dashboard/ConsultForm";
 import PrescriptionForm from "../components/dashboard/PrescriptionForm";
+import ReferForm from "../components/dashboard/ReferenceForm";
 import SuccessNotice from "../../shared/components/ErrorNotice";
 import Footer from "../../shared/components/Footer";
 
@@ -37,7 +38,6 @@ export default class CdDashboard extends Component {
     this.toPrescribe = this.toPrescribe.bind(this);
     this.toAdmit = this.toAdmit.bind(this);
     this.toRefer = this.toRefer.bind(this);
-    this.toFinishPrescribe = this.toFinishPrescribe.bind(this);
   }
 
   componentDidMount() {
@@ -67,6 +67,9 @@ export default class CdDashboard extends Component {
         break;
       case "precribing":
         this.setState({ currentComponent: "precribing" });
+        break;
+      case "refering":
+        this.setState({ currentComponent: "refering" });
         break;
       default:
         this.setState({ currentComponent: "dashboard" });
@@ -142,9 +145,10 @@ export default class CdDashboard extends Component {
     this.setComponent("dashboard");
   }
 
-  toRefer(conId) {}
-
-  toFinishPrescribe() {}
+  toRefer(conId) {
+    this.setState({ currentConsultationId: conId });
+    this.setComponent("refering");
+  }
 
   render() {
     return (
@@ -216,7 +220,16 @@ export default class CdDashboard extends Component {
                   patient={this.state.currentPatient}
                   consultationId={this.state.currentConsultationId}
                   setComponent={this.setComponent}
-                  toFinishPrescribe={this.toFinishPrescribe}
+                />
+              ) : (
+                <div></div>
+              )}
+
+              {this.state.currentComponent === "refering" ? (
+                <ReferForm
+                  patient={this.state.currentPatient}
+                  consultationId={this.state.currentConsultationId}
+                  setComponent={this.setComponent}
                 />
               ) : (
                 <div></div>

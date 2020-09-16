@@ -21,10 +21,10 @@ view patient visit details - view all already available info(FE)
 ****consult - create a consultation(with reference)
 - change patient stage to in treatment
 - redirect to prescribe/reference to clinic/dashboard(admission)
-prescribe - get all opd drugs
+****prescribe - get all opd drugs
 - add received drugs list to consultation
 - change the stage to opd prescribed
-reference to clinic - create a reference to clinic(with reference)
+****reference to clinic - create a reference to clinic(with reference)
 - stage to clinic referenced
 - redirect to dashboard
 ****reference to admission - change the stage to ward referenced
@@ -186,6 +186,9 @@ router.route("/prescribe/:conId").post((req, res) => {
           state: "pending",
         });
       });
+
+      consultation.stage = "opd_prescribed";
+
       consultation
         .save()
         .then(() => res.json("success"))
@@ -201,12 +204,11 @@ router.route("/all_crefs").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-//add a clinic references - won't add
-router.route("/add_cref").post((req, res) => {
+//add a clinic references
+router.route("/add_cref/:conId").post((req, res) => {
   const reasons = req.body.reasons;
   const treatmentsProvided = req.body.treatmentsProvided;
-  const consultation = req.body.consultation; //consultation id - might convert
-  //const clinicVisits = req.body.clinicVisits;//added when visiting
+  const consultation = mongoose.Types.ObjectId(req.params.conId); //consultation id - might convert
 
   const newClinicReference = new ClinicReference({
     reasons,
@@ -216,7 +218,13 @@ router.route("/add_cref").post((req, res) => {
 
   newClinicReference
     .save()
-    .then(() => res.json("clinic reference added!"))
+    .then(() => {
+      Consultation.findByIdAndUpdate(req.params.conId, {
+        stage: "clinic_referenced",
+      })
+        .then(() => res.json("success"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
