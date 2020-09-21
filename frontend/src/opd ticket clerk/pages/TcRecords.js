@@ -79,7 +79,6 @@ class TcRecords extends Component {
       default:
         this.setState({ previousComponent: "start" });
     }
-    console.log(this.state.previousComponent);
   }
 
   //search functions
@@ -108,7 +107,6 @@ class TcRecords extends Component {
 
   onSearchAllPatientsNic(e) {
     if (e.target.value.trim() !== "") {
-      console.log(e.target.value);
       const token = window.sessionStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_tc/all_patients/nic/" + e.target.value,
@@ -159,7 +157,6 @@ class TcRecords extends Component {
         this.setState({
           success: "Patient record deleted successfully",
         });
-        console.log(this.state.success);
         setTimeout(() => {
           this.setState({
             success: undefined,

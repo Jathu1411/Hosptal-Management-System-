@@ -150,9 +150,6 @@ export default class PrescriptionForm extends Component {
     const newPrescription = [...this.state.prescription, newDrug];
 
     this.setState({ prescription: newPrescription });
-
-    // console.log(drug);
-    // console.log(amount);
   }
 
   toRemoveDrug(key) {

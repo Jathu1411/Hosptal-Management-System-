@@ -127,7 +127,6 @@ export default class CdDashboard extends Component {
 
   //CRUD functions
   toConsult(id) {
-    //console.log(id);
     this.setState({
       currentPatient: this.state.patients.find((patient) => patient._id === id),
     });
@@ -136,7 +135,6 @@ export default class CdDashboard extends Component {
   }
 
   toPrescribe(conId) {
-    // console.log(conId);
     this.setState({ currentConsultationId: conId });
     this.setComponent("precribing");
   }

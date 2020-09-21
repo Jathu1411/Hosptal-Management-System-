@@ -73,7 +73,6 @@ export default class CdRecords extends Component {
       default:
         this.setState({ previousComponent: "start" });
     }
-    console.log(this.state.previousComponent);
   }
 
   goToPrevious() {
@@ -107,7 +106,6 @@ export default class CdRecords extends Component {
 
   onSearchAllPatientsNic(e) {
     if (e.target.value.trim() !== "") {
-      console.log(e.target.value);
       const token = window.sessionStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_consultant/all_patients/nic/" +

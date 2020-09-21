@@ -44,7 +44,6 @@ export default class RegisterForm extends Component {
     })
       .then((res) => {
         patient = res.data;
-        console.log(patient);
         this.setState({
           name: patient.name,
           nic: patient.nic,
