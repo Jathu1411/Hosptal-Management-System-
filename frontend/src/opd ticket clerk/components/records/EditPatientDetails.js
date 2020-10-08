@@ -9,6 +9,8 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 
+import ValidationModal from "../../../shared/components/NoticeModal";
+
 import Moment from "moment";
 
 export default class RegisterForm extends Component {
@@ -18,7 +20,6 @@ export default class RegisterForm extends Component {
     Moment().utcOffset("+05:30");
 
     this.onChangeName = this.onChangeName.bind(this);
-    this.onChangeNic = this.onChangeNic.bind(this);
     this.onChangeDob = this.onChangeDob.bind(this);
     this.onChangeGender = this.onChangeGender.bind(this);
     this.onChangeAddress = this.onChangeAddress.bind(this);
@@ -33,6 +34,8 @@ export default class RegisterForm extends Component {
       address: "",
       phone: "",
       success: undefined,
+      modalShow: false,
+      modalMessage: "",
     };
   }
 
@@ -64,12 +67,6 @@ export default class RegisterForm extends Component {
     });
   }
 
-  onChangeNic(e) {
-    this.setState({
-      nic: e.target.value,
-    });
-  }
-
   onChangeDob(e) {
     this.setState({
       dob: Moment(e.target.value).toDate(),
@@ -97,37 +94,81 @@ export default class RegisterForm extends Component {
   onSubmit(e) {
     e.preventDefault();
 
-    const patient = {
-      name: this.state.name,
-      nic: this.state.nic,
-      dob: this.state.dob,
-      gender: this.state.gender,
-      address: this.state.address,
-      phone: this.state.phone,
-    };
+    if (this.state.name.trim() === "") {
+      this.setState({
+        modalMessage: "Patient name field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.nic.trim() === "") {
+      this.setState({
+        modalMessage: "Patient NIC number field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.nic.trim().length < 10) {
+      this.setState({
+        modalMessage: "Patient NIC number field must contain 10 characters",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.nic.trim().length > 10) {
+      this.setState({
+        modalMessage:
+          "Patient NIC number field must contain 10 characters, try removing spaces.",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.gender.trim() === "") {
+      this.setState({
+        modalMessage: "Patient gender field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.address.trim() === "") {
+      this.setState({
+        modalMessage: "Patient address field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.phone.trim().length > 10) {
+      this.setState({
+        modalMessage:
+          "Patient phone number field must contain 10 characters, try removing country code.",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.phone.trim().length < 10) {
+      this.setState({
+        modalMessage: "Patient phone number field must contain 10 characters",
+      });
+      this.setState({ modalShow: true });
+    } else {
+      const patient = {
+        name: this.state.name,
+        nic: this.state.nic,
+        dob: this.state.dob,
+        gender: this.state.gender,
+        address: this.state.address,
+        phone: this.state.phone,
+      };
 
-    const token = window.sessionStorage.getItem("auth-token");
-    Axios.post(
-      "http://localhost:5000/api/opd_tc/update/" + this.props.patient._id,
-      patient,
-      {
-        headers: { "x-auth-token": token },
-      }
-    ).then((res) => {
-      if (res.data === "success") {
-        this.setState({
-          success: "Patient updated successfully",
-        });
-
-        this.props.editFinish(this.props.patient._id);
-
-        setTimeout(() => {
+      const token = window.sessionStorage.getItem("auth-token");
+      Axios.post(
+        "http://localhost:5000/api/opd_tc/update/" + this.props.patient._id,
+        patient,
+        {
+          headers: { "x-auth-token": token },
+        }
+      ).then((res) => {
+        if (res.data === "success") {
           this.setState({
-            success: undefined,
+            success: "Patient updated successfully",
           });
-        }, 5000);
-      }
-    });
+
+          this.props.editFinish(this.props.patient._id);
+
+          setTimeout(() => {
+            this.setState({
+              success: undefined,
+            });
+          }, 5000);
+        }
+      });
+    }
   }
 
   render() {
@@ -177,7 +218,6 @@ export default class RegisterForm extends Component {
                   type="text"
                   value={this.state.name}
                   placeholder="Patient's name"
-                  required
                   onChange={this.onChangeName}
                 />
               </Col>
@@ -189,7 +229,7 @@ export default class RegisterForm extends Component {
               <Col sm={10}>
                 <Form.Control
                   type="text"
-                  required
+                  disabled
                   value={this.state.nic}
                   placeholder="Patient's NIC number"
                   onChange={this.onChangeNic}
@@ -250,7 +290,6 @@ export default class RegisterForm extends Component {
               <Col sm={10}>
                 <Form.Control
                   type="text"
-                  required
                   value={this.state.address}
                   placeholder="Patient's address"
                   onChange={this.onChangeAddress}
@@ -264,7 +303,6 @@ export default class RegisterForm extends Component {
               <Col sm={10}>
                 <Form.Control
                   type="text"
-                  required
                   value={this.state.phone}
                   placeholder="Patient's contact number"
                   onChange={this.onChangePhone}
@@ -276,6 +314,12 @@ export default class RegisterForm extends Component {
             </Button>
           </Form>
         </Container>
+        <ValidationModal
+          show={this.state.modalShow}
+          onHide={() => this.setState({ modalShow: false })}
+          title="Attention!"
+          message={this.state.modalMessage}
+        />
       </div>
     );
   }

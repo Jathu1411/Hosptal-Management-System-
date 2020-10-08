@@ -98,7 +98,6 @@ export default class RegisterForm extends Component {
     e.preventDefault();
 
     let patientExist = true;
-
     if (this.state.name.trim() === "") {
       this.setState({
         modalMessage: "Patient name field is required",
