@@ -432,8 +432,8 @@ export default class ConsultForm extends Component {
                   </Col>
                   <Container style={{ textAlign: "center", paddingTop: "3px" }}>
                     <Form.Text className="text-muted">
-                      These informations cannot be changed changed later, make
-                      sure these are correct before proceeding.
+                      These informations cannot be changed later, make sure
+                      these are correct before proceeding.
                     </Form.Text>
                   </Container>
                 </Form.Group>

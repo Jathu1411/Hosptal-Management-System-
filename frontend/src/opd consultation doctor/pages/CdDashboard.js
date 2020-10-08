@@ -95,7 +95,6 @@ export default class CdDashboard extends Component {
           console.log(error);
         });
       this.setComponent("waiting_result");
-      this.setPreviousComponent("dashboard");
     } else {
       this.setComponent("dashboard");
     }
@@ -119,7 +118,6 @@ export default class CdDashboard extends Component {
           console.log(error);
         });
       this.setComponent("waiting_result");
-      this.setPreviousComponent("dashboard");
     } else {
       this.setComponent("dashboard");
     }
