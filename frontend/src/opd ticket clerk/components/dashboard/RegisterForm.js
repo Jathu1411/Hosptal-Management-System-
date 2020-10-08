@@ -9,6 +9,8 @@ import Button from "react-bootstrap/Button";
 
 import Moment from "moment";
 
+import ValidationModal from "../../../shared/components/NoticeModal";
+
 export default class RegisterForm extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +33,8 @@ export default class RegisterForm extends Component {
       address: "",
       phone: "",
       success: undefined,
+      modalShow: false,
+      modalMessage: "",
     };
   }
 
@@ -46,6 +50,24 @@ export default class RegisterForm extends Component {
     this.setState({
       nic: e.target.value,
     });
+    if (e.target.value.trim() !== "" && e.target.value.trim().length === 10) {
+      //check whether patient already exists
+      const token = window.sessionStorage.getItem("auth-token");
+      Axios.get(
+        "http://localhost:5000/api/opd_tc/patient_exist/" + e.target.value,
+        {
+          headers: { "x-auth-token": token },
+        }
+      ).then((res) => {
+        if (res.data === true) {
+          this.setState({
+            modalMessage:
+              "Patient with this NIC number already exists, try finding patient in records",
+          });
+          this.setState({ modalShow: true });
+        }
+      });
+    }
   }
 
   onChangeDob(e) {
@@ -75,40 +97,108 @@ export default class RegisterForm extends Component {
   onSubmit(e) {
     e.preventDefault();
 
-    const patient = {
-      name: this.state.name,
-      nic: this.state.nic,
-      dob: this.state.dob,
-      gender: this.state.gender,
-      address: this.state.address,
-      phone: this.state.phone,
-    };
+    let patientExist = true;
 
-    const token = window.sessionStorage.getItem("auth-token");
-    Axios.post("http://localhost:5000/api/opd_tc/add", patient, {
-      headers: { "x-auth-token": token },
-    }).then((res) => {
-      if (res.data === "success") {
-        this.setState({
-          success: "Patient registerd successfully",
+    if (this.state.name.trim() === "") {
+      this.setState({
+        modalMessage: "Patient name field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.nic.trim() === "") {
+      this.setState({
+        modalMessage: "Patient NIC number field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.nic.trim().length < 10) {
+      this.setState({
+        modalMessage: "Patient NIC number field must contain 10 characters",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.nic.trim().length > 10) {
+      this.setState({
+        modalMessage:
+          "Patient NIC number field must contain 10 characters, try removing spaces.",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.gender.trim() === "") {
+      this.setState({
+        modalMessage: "Patient gender field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.address.trim() === "") {
+      this.setState({
+        modalMessage: "Patient address field is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.phone.trim().length > 10) {
+      this.setState({
+        modalMessage:
+          "Patient phone number field must contain 10 characters, try removing country code.",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.phone.trim().length < 10) {
+      this.setState({
+        modalMessage: "Patient phone number field must contain 10 characters",
+      });
+      this.setState({ modalShow: true });
+    } else {
+      //check whether patient already exists
+      const token = window.sessionStorage.getItem("auth-token");
+      Axios.get(
+        "http://localhost:5000/api/opd_tc/patient_exist/" + this.state.nic,
+        {
+          headers: { "x-auth-token": token },
+        }
+      )
+        .then((res) => {
+          patientExist = res.data;
+          if (patientExist === true) {
+            this.setState({
+              modalMessage:
+                "Patient with this NIC number already exists, try finding patient in records",
+            });
+            this.setState({ modalShow: true });
+          } else {
+            const patient = {
+              name: this.state.name,
+              nic: this.state.nic,
+              dob: this.state.dob,
+              gender: this.state.gender,
+              address: this.state.address,
+              phone: this.state.phone,
+            };
+
+            const token = window.sessionStorage.getItem("auth-token");
+            Axios.post("http://localhost:5000/api/opd_tc/add", patient, {
+              headers: { "x-auth-token": token },
+            }).then((res) => {
+              if (res.data === "success") {
+                this.setState({
+                  success: "Patient registerd successfully",
+                });
+
+                this.setState({
+                  name: "",
+                  nic: "",
+                  dob: new Date(),
+                  gender: "",
+                  address: "",
+                  phone: "",
+                });
+
+                setTimeout(() => {
+                  this.setState({
+                    success: undefined,
+                  });
+                }, 5000);
+              }
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
-
-        this.setState({
-          name: "",
-          nic: "",
-          dob: new Date(),
-          gender: "",
-          address: "",
-          phone: "",
-        });
-
-        setTimeout(() => {
-          this.setState({
-            success: undefined,
-          });
-        }, 5000);
-      }
-    });
+    }
   }
 
   render() {
@@ -136,7 +226,6 @@ export default class RegisterForm extends Component {
                 type="text"
                 value={this.state.name}
                 placeholder="Patient's name"
-                required
                 onChange={this.onChangeName}
               />
             </Col>
@@ -148,7 +237,6 @@ export default class RegisterForm extends Component {
             <Col sm={10}>
               <Form.Control
                 type="text"
-                required
                 value={this.state.nic}
                 placeholder="Patient's NIC number"
                 onChange={this.onChangeNic}
@@ -163,6 +251,7 @@ export default class RegisterForm extends Component {
               <input
                 className="form-control"
                 type="date"
+                max={Moment(this.state.dob).format("YYYY-MM-DD")}
                 value={Moment(this.state.dob).format("YYYY-MM-DD")}
                 onChange={this.onChangeDob}
                 id="example-date-input"
@@ -180,7 +269,6 @@ export default class RegisterForm extends Component {
                     inline
                     label="Female"
                     type="radio"
-                    required
                     name="gender"
                     value="female"
                     checked={this.state.gender === "female"}
@@ -191,7 +279,6 @@ export default class RegisterForm extends Component {
                     inline
                     label="Male"
                     type="radio"
-                    required
                     name="gender"
                     value="male"
                     checked={this.state.gender === "male"}
@@ -209,7 +296,6 @@ export default class RegisterForm extends Component {
             <Col sm={10}>
               <Form.Control
                 type="text"
-                required
                 value={this.state.address}
                 placeholder="Patient's address"
                 onChange={this.onChangeAddress}
@@ -223,7 +309,6 @@ export default class RegisterForm extends Component {
             <Col sm={10}>
               <Form.Control
                 type="text"
-                required
                 value={this.state.phone}
                 placeholder="Patient's contact number"
                 onChange={this.onChangePhone}
@@ -234,6 +319,12 @@ export default class RegisterForm extends Component {
             Register patient
           </Button>
         </Form>
+        <ValidationModal
+          show={this.state.modalShow}
+          onHide={() => this.setState({ modalShow: false })}
+          title="Attention!"
+          message={this.state.modalMessage}
+        />
       </div>
     );
   }

@@ -50,6 +50,17 @@ router.route("/all_patients/nic/:key").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+//check whether a patient nic exists
+router.route("/patient_exist/:nic").get((req, res) => {
+  if (req.params.nic !== "") {
+    Patient.exists({ nic: req.params.nic })
+      .then((result) => res.json(result))
+      .catch((err) => res.status(400).json("Error: " + err));
+  } else {
+    res.json(false);
+  }
+});
+
 //get a patient
 router.route("/:id").get((req, res) => {
   Patient.findById(req.params.id)
