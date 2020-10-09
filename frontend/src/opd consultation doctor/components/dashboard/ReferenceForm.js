@@ -11,6 +11,7 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 
 import SuccessNotice from "../../../shared/components/ErrorNotice";
+import LoadingModal from "../../../shared/components/LoadingModal";
 
 export default class ReferenceForm extends Component {
   constructor(props) {
@@ -27,11 +28,13 @@ export default class ReferenceForm extends Component {
       consultation: {},
       reason: "",
       treatment: "",
+      loading: false,
     };
   }
 
   componentDidMount() {
     //get patient info from server
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get(
       "http://localhost:5000/api/opd_consultant/" + this.props.patient._id,
@@ -50,6 +53,7 @@ export default class ReferenceForm extends Component {
         )
           .then((res) => {
             this.setState({ consultation: res.data });
+            this.setState({ loading: false });
           })
           .catch((error) => {
             console.log(error);
@@ -79,6 +83,7 @@ export default class ReferenceForm extends Component {
       reasons: this.state.reason,
       treatmentsProvided: this.state.treatment,
     };
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.post(
       "http://localhost:5000/api/opd_consultant/add_cref/" +
@@ -88,6 +93,7 @@ export default class ReferenceForm extends Component {
         headers: { "x-auth-token": token },
       }
     ).then((res) => {
+      this.setState({ loading: false });
       this.setState({
         success: "Referenced to clinic successfully",
       });
@@ -103,6 +109,16 @@ export default class ReferenceForm extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <Container>
           <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <MediaQuery minDeviceWidth={1200}>
@@ -122,15 +138,21 @@ export default class ReferenceForm extends Component {
         <Container>
           <div style={{ fontSize: "1.1rem" }}>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Name</Col>
+              <Col sm={2}>
+                <b>Name</b>
+              </Col>
               <Col sm={10}>{this.state.patient.name}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>NIC number</Col>
+              <Col sm={2}>
+                <b>NIC number</b>
+              </Col>
               <Col sm={10}>{this.state.patient.nic}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Age</Col>
+              <Col sm={2}>
+                <b>Age</b>
+              </Col>
               <Col sm={10}>
                 {Moment().diff(this.state.patient.dob, "years")}
               </Col>
@@ -141,15 +163,21 @@ export default class ReferenceForm extends Component {
               <h3 className="h5">Consultation information</h3>
             </div>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Disease</Col>
+              <Col sm={2}>
+                <b>Disease</b>
+              </Col>
               <Col sm={10}>{this.state.consultation.disease}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Disease state</Col>
+              <Col sm={2}>
+                <b>Disease state</b>
+              </Col>
               <Col sm={10}>{this.state.consultation.diseaseState}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>notes</Col>
+              <Col sm={2}>
+                <b>notes</b>
+              </Col>
               <Col sm={10}>{this.state.consultation.notes}</Col>
             </Row>
           </div>

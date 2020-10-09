@@ -10,6 +10,7 @@ import SearchPatientList from "../components/records/SearchPatientList";
 import PatientDetails from "../components/records/PatientDetails";
 import EditPatientDetails from "../components/records/EditPatientDetails";
 import SuccessNotice from "../../shared/components/ErrorNotice";
+import LoadingModal from "../../shared/components/LoadingModal";
 
 class TcRecords extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class TcRecords extends Component {
       searchedPatients: [],
       currentPatient: undefined,
       success: undefined,
+      loading: false,
     };
 
     this.onSearchAllPatientsNic = this.onSearchAllPatientsNic.bind(this);
@@ -37,12 +39,14 @@ class TcRecords extends Component {
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
       headers: { "x-auth-token": token },
     })
       .then((res) => {
         this.setState({ patients: res.data });
+        this.setState({ loading: false });
       })
       .catch((error) => {
         console.log(error);
@@ -140,11 +144,13 @@ class TcRecords extends Component {
 
   toDeletePatient(id) {
     let success = undefined;
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.delete("http://localhost:5000/api/opd_tc/" + id, {
       headers: { "x-auth-token": token },
     }).then((res) => {
       success = res.data;
+      this.setState({ loading: false });
       this.setState({
         patients: this.state.patients.filter((element) => element._id !== id),
         searchedPatients: this.state.searchedPatients.filter(
@@ -168,6 +174,7 @@ class TcRecords extends Component {
 
   toConsultation(id) {
     let success = undefined;
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.post("http://localhost:5000/api/opd_tc//consult/" + id, {
       headers: { "x-auth-token": token },
@@ -178,6 +185,7 @@ class TcRecords extends Component {
           headers: { "x-auth-token": token },
         })
           .then((res) => {
+            this.setState({ loading: false });
             this.setState({ patients: res.data }, () => {
               let tempResults = [];
               this.state.searchedPatients.forEach((searchResult) => {
@@ -201,7 +209,7 @@ class TcRecords extends Component {
                 this.setComponent("start");
               }
               if (this.state.currentComponent === "patient_details") {
-                this.setComponent("patient_details");
+                this.setComponent("start");
               }
               if (success === "success") {
                 this.setState({
@@ -233,11 +241,13 @@ class TcRecords extends Component {
   }
 
   editFinish(id) {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
       headers: { "x-auth-token": token },
     })
       .then((res) => {
+        this.setState({ loading: false });
         this.setState({ patients: res.data });
       })
       .catch((error) => {
@@ -258,6 +268,16 @@ class TcRecords extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <div style={{ minHeight: "calc(100vh - 70px" }}>
           <TcNavbar />
           <div style={{ paddingTop: "60px" }}>

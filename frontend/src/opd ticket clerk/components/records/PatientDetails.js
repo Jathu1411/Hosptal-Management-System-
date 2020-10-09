@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import ConfirmationModal from "../../../shared/components/ConfirmationModal";
+import LoadingModal from "../../../shared/components/LoadingModal";
 
 import Moment from "moment";
 
@@ -18,6 +19,7 @@ export default class PatientDetails extends Component {
       patient: {},
       consultations: [],
       modalShow: false,
+      loading: false,
     };
 
     this.getVisits = this.getVisits.bind(this);
@@ -26,6 +28,7 @@ export default class PatientDetails extends Component {
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     let patient = undefined;
     Axios.get("http://localhost:5000/api/opd_tc/" + this.props.patient._id, {
@@ -33,6 +36,7 @@ export default class PatientDetails extends Component {
     })
       .then((res) => {
         patient = res.data;
+
         this.setState({
           patient: patient,
         });
@@ -49,6 +53,7 @@ export default class PatientDetails extends Component {
     )
       .then((res) => {
         this.setState({ consultations: res.data }, () => {});
+        this.setState({ loading: false });
       })
       .catch((error) => {
         console.log(error);
@@ -86,12 +91,23 @@ export default class PatientDetails extends Component {
   }
 
   toDeletePatient(id) {
+    this.setState({ modalShow: false });
     this.props.toDeletePatient(id);
   }
 
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <Container>
           <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <MediaQuery minDeviceWidth={1200}>
@@ -161,26 +177,12 @@ export default class PatientDetails extends Component {
             <Col sm={4}>
               <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                 {this.props.patient.stage === "registered" && (
-                  <Button
-                    size="lg"
-                    block
-                    disabled
-                    onClick={() => {
-                      this.props.toConsultation(this.state.patient._id);
-                    }}
-                  >
+                  <Button size="lg" block disabled>
                     In consultation
                   </Button>
                 )}
                 {this.state.patient.stage === "in_treatment" && (
-                  <Button
-                    size="lg"
-                    block
-                    disabled
-                    onClick={() => {
-                      this.props.toConsultation(this.state.patient._id);
-                    }}
-                  >
+                  <Button size="lg" block disabled>
                     In treatment
                   </Button>
                 )}

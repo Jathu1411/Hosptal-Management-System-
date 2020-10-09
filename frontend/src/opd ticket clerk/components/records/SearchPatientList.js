@@ -68,6 +68,7 @@ export default class SearchPatientsList extends Component {
                   <th>Date of birth</th>
                   <th>Age</th>
                   <th>Address</th>
+                  <th>Phone</th>
                   <th>Gender</th>
                   <th>To consultation</th>
                 </tr>

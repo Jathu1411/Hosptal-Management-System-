@@ -11,6 +11,7 @@ import ConsultForm from "../components/dashboard/ConsultForm";
 import PrescriptionForm from "../components/dashboard/PrescriptionForm";
 import ReferForm from "../components/dashboard/ReferenceForm";
 import SuccessNotice from "../../shared/components/ErrorNotice";
+import LoadingModal from "../../shared/components/LoadingModal";
 import Footer from "../../shared/components/Footer";
 
 export default class CdDashboard extends Component {
@@ -25,6 +26,7 @@ export default class CdDashboard extends Component {
       currentPatient: undefined,
       success: undefined,
       currentConsultationId: "",
+      loading: false,
     };
 
     this.onSearchWaitingPatientsNic = this.onSearchWaitingPatientsNic.bind(
@@ -41,12 +43,14 @@ export default class CdDashboard extends Component {
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
       headers: { "x-auth-token": token },
     })
       .then((res) => {
         this.setState({ patients: res.data });
+        this.setState({ loading: false });
       })
       .catch((error) => {
         console.log(error);
@@ -149,6 +153,16 @@ export default class CdDashboard extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <div style={{ minHeight: "calc(100vh - 70px" }}>
           <CdNavbar />
           <div style={{ paddingTop: "60px" }}>

@@ -10,6 +10,8 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import NormalDrugList from "./NormalDrugList";
 
+import LoadingModal from "../../../shared/components/LoadingModal";
+
 export default class VisitDetails extends Component {
   constructor(props) {
     super(props);
@@ -20,10 +22,12 @@ export default class VisitDetails extends Component {
       patient: {},
       consultation: {},
       reference: {},
+      loading: false,
     };
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     //get patient info from server
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get(
@@ -44,6 +48,7 @@ export default class VisitDetails extends Component {
           .then((res) => {
             this.setState({ consultation: res.data });
             if (this.state.consultation.stage === "clinic_referenced") {
+              this.setState({ loading: true });
               Axios.get(
                 "http://localhost:5000/api/opd_consultant/crefs/" +
                   this.props.consultationId,
@@ -53,11 +58,14 @@ export default class VisitDetails extends Component {
               )
                 .then((res) => {
                   this.setState({ reference: res.data });
+                  console.log(this.state.reference);
+                  this.setState({ loading: false });
                 })
                 .catch((error) => {
                   console.log(error);
                 });
             }
+            this.setState({ loading: false });
           })
           .catch((error) => {
             console.log(error);
@@ -71,6 +79,16 @@ export default class VisitDetails extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <Container>
           <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <MediaQuery minDeviceWidth={1200}>
@@ -105,29 +123,41 @@ export default class VisitDetails extends Component {
         <Container>
           <div style={{ fontSize: "1.1rem" }}>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Name</Col>
+              <Col sm={2}>
+                <b>Name</b>
+              </Col>
               <Col sm={10}>{this.state.patient.name}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>NIC number</Col>
+              <Col sm={2}>
+                <b>NIC number</b>
+              </Col>
               <Col sm={10}>{this.state.patient.nic}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Age</Col>
+              <Col sm={2}>
+                <b>Age</b>
+              </Col>
               <Col sm={10}>
                 {Moment().diff(this.state.patient.dob, "years")}
               </Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Gender</Col>
+              <Col sm={2}>
+                <b>Gender</b>
+              </Col>
               <Col sm={10}>{this.state.patient.gender}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Address</Col>
+              <Col sm={2}>
+                <b>Address</b>
+              </Col>
               <Col sm={10}>{this.state.patient.address}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Phone</Col>
+              <Col sm={2}>
+                <b>Phone</b>
+              </Col>
               <Col sm={10}>{this.state.patient.phone}</Col>
             </Row>
 
@@ -136,15 +166,21 @@ export default class VisitDetails extends Component {
               <h3 className="h5">Consultation information</h3>
             </div>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Disease</Col>
+              <Col sm={2}>
+                <b>Disease</b>
+              </Col>
               <Col sm={10}>{this.state.consultation.disease}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>Disease state</Col>
+              <Col sm={2}>
+                <b>Disease state</b>
+              </Col>
               <Col sm={10}>{this.state.consultation.diseaseState}</Col>
             </Row>
             <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-              <Col sm={2}>notes</Col>
+              <Col sm={2}>
+                <b>notes</b>
+              </Col>
               <Col sm={10}>{this.state.consultation.notes}</Col>
             </Row>
           </div>
@@ -169,19 +205,22 @@ export default class VisitDetails extends Component {
               <div style={{ paddingBottom: "5px" }}>
                 <h3 className="h5">Clinic reference information</h3>
               </div>
-              <Container>
-                <div style={{ fontSize: "1.1rem" }}>
-                  <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-                    <Col sm={2}>Reasons for reffering</Col>
-                    <Col sm={10}>{this.state.reference.reason}</Col>
-                  </Row>
-                  <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-                    <Col sm={2}>Treatments provided</Col>
-                    <Col sm={10}>{this.state.reference.treatment}</Col>
-                  </Row>
-                </div>
-                <hr />
-              </Container>
+
+              <div style={{ fontSize: "1.1rem" }}>
+                <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                  <Col sm={4}>
+                    <b>Reasons for refering</b>
+                  </Col>
+                  <Col sm={8}>{this.state.reference.reasons}</Col>
+                </Row>
+                <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                  <Col sm={4}>
+                    <b>Treatments provided</b>
+                  </Col>
+                  <Col sm={8}>{this.state.reference.treatmentsProvided}</Col>
+                </Row>
+              </div>
+              <hr />
             </div>
           ) : (
             <div></div>

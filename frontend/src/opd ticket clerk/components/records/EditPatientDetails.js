@@ -10,6 +10,7 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 
 import ValidationModal from "../../../shared/components/NoticeModal";
+import LoadingModal from "../../../shared/components/LoadingModal";
 
 import Moment from "moment";
 
@@ -36,10 +37,12 @@ export default class RegisterForm extends Component {
       success: undefined,
       modalShow: false,
       modalMessage: "",
+      loading: false,
     };
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     let patient = undefined;
     Axios.get("http://localhost:5000/api/opd_tc/" + this.props.patient._id, {
@@ -47,6 +50,7 @@ export default class RegisterForm extends Component {
     })
       .then((res) => {
         patient = res.data;
+        this.setState({ loading: false });
         this.setState({
           name: patient.name,
           nic: patient.nic,
@@ -174,6 +178,16 @@ export default class RegisterForm extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <Container>
           <div className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <MediaQuery minDeviceWidth={1200}>

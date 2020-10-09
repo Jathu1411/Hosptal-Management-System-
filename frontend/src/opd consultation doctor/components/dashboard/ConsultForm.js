@@ -10,6 +10,7 @@ import Container from "react-bootstrap/Container";
 
 import SuccessNotice from "../../../shared/components/ErrorNotice";
 import ValidationModal from "../../../shared/components/NoticeModal";
+import LoadingModal from "../../../shared/components/LoadingModal";
 import VisitDetails from "./VisitDetails";
 
 import Moment from "moment";
@@ -43,11 +44,13 @@ export default class ConsultForm extends Component {
       modalShow: false,
       modalMessage: "",
       currentComponent: "start",
+      loading: false,
     };
   }
 
   componentDidMount() {
     //get patient info from server
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get(
       "http://localhost:5000/api/opd_consultant/" + this.props.patient._id,
@@ -66,6 +69,7 @@ export default class ConsultForm extends Component {
         )
           .then((res) => {
             this.setState({ consultations: res.data });
+            this.setState({ loading: false });
           })
           .catch((error) => {
             console.log(error);
@@ -140,10 +144,12 @@ export default class ConsultForm extends Component {
         consultant: window.sessionStorage.getItem("id"),
       };
 
+      this.setState({ loading: true });
       const token = window.sessionStorage.getItem("auth-token");
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
       }).then((res) => {
+        this.setState({ loading: false });
         this.setState({
           success: "Patient consulted successfully",
         });
@@ -188,10 +194,12 @@ export default class ConsultForm extends Component {
         consultant: window.sessionStorage.getItem("id"),
       };
 
+      this.setState({ loading: true });
       const token = window.sessionStorage.getItem("auth-token");
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
       }).then((res) => {
+        this.setState({ loading: false });
         this.setState({
           success: "Patient consulted successfully",
         });
@@ -236,6 +244,7 @@ export default class ConsultForm extends Component {
         consultant: window.sessionStorage.getItem("id"),
       };
 
+      this.setState({ loading: true });
       const token = window.sessionStorage.getItem("auth-token");
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
@@ -246,6 +255,7 @@ export default class ConsultForm extends Component {
             headers: { "x-auth-token": token },
           }
         ).then((res) => {
+          this.setState({ loading: false });
           this.setState({
             success: "Patient Consulted and Admitted successfully",
           });
@@ -272,12 +282,15 @@ export default class ConsultForm extends Component {
         return (
           <Row
             key={i + 1}
+            role="button"
             style={{ paddingTop: "2px", paddingBottom: "2px" }}
             onClick={() =>
               this.viewVisit(this.state.patient._id, consultation._id)
             }
           >
-            <Col sm={2}>Visit {i + 1}</Col>
+            <Col sm={2}>
+              <b>Visit {i + 1}</b>
+            </Col>
             <Col sm={10}>
               {Moment(consultation.date).format("DD/MM/YYYY HH:mm")}
             </Col>
@@ -296,6 +309,16 @@ export default class ConsultForm extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         {this.state.currentComponent === "view_visit" ? (
           <div>
             <VisitDetails
@@ -333,15 +356,21 @@ export default class ConsultForm extends Component {
             <Container>
               <div style={{ fontSize: "1.1rem" }}>
                 <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-                  <Col sm={2}>Name</Col>
+                  <Col sm={2}>
+                    <b>Name</b>
+                  </Col>
                   <Col sm={10}>{this.state.patient.name}</Col>
                 </Row>
                 <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-                  <Col sm={2}>NIC number</Col>
+                  <Col sm={2}>
+                    <b>NIC number</b>
+                  </Col>
                   <Col sm={10}>{this.state.patient.nic}</Col>
                 </Row>
                 <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
-                  <Col sm={2}>Age</Col>
+                  <Col sm={2}>
+                    <b>Age</b>
+                  </Col>
                   <Col sm={10}>
                     {Moment().diff(this.state.patient.dob, "years")}
                   </Col>
@@ -481,7 +510,7 @@ export default class ConsultForm extends Component {
             <ValidationModal
               show={this.state.modalShow}
               onHide={() => this.setState({ modalShow: false })}
-              title="Required fields!"
+              title="Attention!"
               message={this.state.modalMessage}
             />
           </div>

@@ -10,6 +10,7 @@ import Button from "react-bootstrap/Button";
 import Moment from "moment";
 
 import ValidationModal from "../../../shared/components/NoticeModal";
+import LoadingModal from "../../../shared/components/LoadingModal";
 
 export default class RegisterForm extends Component {
   constructor(props) {
@@ -35,6 +36,7 @@ export default class RegisterForm extends Component {
       success: undefined,
       modalShow: false,
       modalMessage: "",
+      loading: false,
     };
   }
 
@@ -141,6 +143,7 @@ export default class RegisterForm extends Component {
       });
       this.setState({ modalShow: true });
     } else {
+      this.setState({ loading: true });
       //check whether patient already exists
       const token = window.sessionStorage.getItem("auth-token");
       Axios.get(
@@ -152,6 +155,7 @@ export default class RegisterForm extends Component {
         .then((res) => {
           patientExist = res.data;
           if (patientExist === true) {
+            this.setState({ loading: false });
             this.setState({
               modalMessage:
                 "Patient with this NIC number already exists, try finding patient in records",
@@ -171,6 +175,7 @@ export default class RegisterForm extends Component {
             Axios.post("http://localhost:5000/api/opd_tc/add", patient, {
               headers: { "x-auth-token": token },
             }).then((res) => {
+              this.setState({ loading: false });
               if (res.data === "success") {
                 this.setState({
                   success: "Patient registerd successfully",
@@ -203,6 +208,16 @@ export default class RegisterForm extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <div style={{ paddingBottom: "10px" }}>
           <h3 className="h4">Register Patient</h3>
         </div>
