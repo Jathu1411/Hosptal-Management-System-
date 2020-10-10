@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
+const HttpError =  require("../models/http-error");
 let Patient = require("../models/patient.model");
 let Consultation = require("../models/consultation.model");
 let OpdDrug = require("../models/opdDrug.model");
@@ -17,7 +18,7 @@ const auth = require("../middleware/auth");
 ****view patient details - get a particular patient
 - get all the consultations of that patient
 - redirect to view patient details page
-view patient visit details - view all already available info(FE)
+****view patient visit details - view all already available info(FE)
 ****consult - create a consultation(with reference)
 - change patient stage to in treatment
 - redirect to prescribe/reference to clinic/dashboard(admission)

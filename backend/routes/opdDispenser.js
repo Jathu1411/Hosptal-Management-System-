@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
+const HttpError =  require("../models/http-error");
 let Patient = require("../models/patient.model");
 let Drug = require("../models/opdDrug.model");
 

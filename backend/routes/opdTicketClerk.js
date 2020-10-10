@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const HttpError =  require("../models/http-error");
 let Patient = require("../models/patient.model");
 let Consultation = require("../models/consultation.model");
 

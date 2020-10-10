@@ -2,10 +2,16 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
+const HttpError =  require("../models/http-error");
 
 require("dotenv").config();
 
 let User = require("../models/user.model");
+
+//error throwing
+// if(!place){
+//   return next(new HttpError("Could not find place", 404));
+// }
 
 /*Operation
 ****login - find a particular user for a username
