@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
-const HttpError =  require("../models/http-error");
+const HttpError = require("../models/http-error");
+const auth = require("../middleware/auth");
 let Patient = require("../models/patient.model");
 let Drug = require("../models/opdDrug.model");
 
@@ -29,14 +30,14 @@ make a drug action - add a action to drug
 */
 
 //get all patients
-router.route("/all_patients").get((req, res) => {
+router.route("/all_patients").get(auth, (req, res) => {
   Patient.find()
     .then((patients) => res.json(patients))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
 //add a drug
-router.route("/add").post((req, res) => {
+router.route("/add").post(auth, (req, res) => {
   const drugName = req.body.drugName;
   const drugType = req.body.drugType;
   const availQuantity = req.body.availQuantity;

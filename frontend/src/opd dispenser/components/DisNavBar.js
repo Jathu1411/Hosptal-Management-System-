@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 
@@ -7,15 +7,11 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Image from "react-bootstrap/Image";
 
-import userContext from "../../context/UserContext";
-
 import logo from "../../account management/pages/LOGO_192.png";
 
 export default function DisNavBar() {
   const history = useHistory();
   const username = window.sessionStorage.getItem("username");
-
-  const { setUserData } = useContext(userContext);
 
   const isMobileDevice = useMediaQuery({
     query: "(max-device-width: 1200px)",
@@ -28,16 +24,11 @@ export default function DisNavBar() {
   const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
 
   const logout = () => {
-    setUserData({
-      token: undefined,
-      user: undefined,
-    });
     window.sessionStorage.setItem("auth-token", "");
     window.sessionStorage.setItem("username", "");
     window.sessionStorage.setItem("id", "");
     window.sessionStorage.setItem("unit", "");
     window.sessionStorage.setItem("post", "");
-
     history.push("/");
   };
 
@@ -80,8 +71,22 @@ export default function DisNavBar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link href="/opd_dis_dashboard">Dashboard</Nav.Link>
-            <Nav.Link href="/opd_dis_dashboard/opd_drug_store">
+            <Nav.Link
+              href="/opd_dis_dashboard"
+              onClick={(e) => {
+                e.preventDefault();
+                history.push("/opd_dis_dashboard");
+              }}
+            >
+              Dashboard
+            </Nav.Link>
+            <Nav.Link
+              href="/opd_dis_dashboard/opd_drug_store"
+              onClick={(e) => {
+                e.preventDefault();
+                history.push("/opd_dis_dashboard/opd_drug_store");
+              }}
+            >
               Drug Store
             </Nav.Link>
             <NavDropdown

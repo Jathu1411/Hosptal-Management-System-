@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Component } from "react";
 import Axios from "axios";
 
 import {
@@ -21,139 +21,165 @@ import IcDashboard from "./opd in charge/pages/IcDashboard";
 import IcRecords from "./opd in charge/pages/IcRecords";
 import IcReports from "./opd in charge/pages/IcReports";
 
-import UserContext from "./context/UserContext";
+export default class App extends Component {
+  constructor(props) {
+    super(props);
 
-const App = () => {
-  const [userData, setUserData] = useState({
-    token: undefined,
-    user: undefined,
-  });
+    this.isLogined = this.isLogined.bind(this);
+    this.isLogin = this.isLogin.bind(this);
 
-  const logout = () => {
-    setUserData({
+    this.state = {
       token: undefined,
       user: undefined,
-    });
-    window.sessionStorage.setItem("auth-token", "");
-    window.sessionStorage.setItem("username", "");
-    window.sessionStorage.setItem("id", "");
-    window.sessionStorage.setItem("unit", "");
-    window.sessionStorage.setItem("post", "");
-  };
-
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      //get the local token
-      let token = window.sessionStorage.getItem("auth-token");
-
-      //if there no local token create blank local token
-      if (token === null) {
-        window.sessionStorage.setItem("auth-token", "");
-        token = "";
-      }
-      //send the local token to check it is valid
-      const tokenRes = await Axios.post(
-        "http://localhost:5000/api/users/tokenIsValid",
-        {},
-        { headers: { "x-auth-token": token } }
-      );
-      //if token is valid set the user data and token in local
-      if (tokenRes.data) {
-        const userRes = await Axios.get("http://localhost:5000/api/users/", {
-          headers: { "x-auth-token": token },
-        });
-        setUserData({
-          token,
-          user: userRes.data,
-        });
-      } else {
-        window.sessionStorage.setItem("auth-token", "");
-      }
+      logedIn: false,
     };
+  }
 
-    checkLoggedIn();
-  }, []);
+  componentDidMount() {
+    let li = this.isLogined();
+    this.setState({ logedIn: li });
+  }
 
-  const isLogin = () => {
-    if (window.sessionStorage.getItem("auth-token") === undefined) {
+  isLogined() {
+    //get the local token
+    let tokenSession = window.sessionStorage.getItem("auth-token");
+
+    //if there no local token create blank local token
+    if (tokenSession === null) {
+      window.sessionStorage.setItem("auth-token", "");
+      tokenSession = "";
+    }
+    //this.setState({ token: tokenSession });
+
+    //send the local token to check it is valid
+    Axios.post(
+      "http://localhost:5000/api/users/tokenIsValid",
+      {},
+      { headers: { "x-auth-token": tokenSession } }
+    )
+      .then((res) => {
+        //if token is valid set the user data and token in local
+        if (res.data.valid) {
+          //not needed
+          window.sessionStorage.setItem("username", res.data.user.username);
+          window.sessionStorage.setItem("id", res.data.user.id);
+          window.sessionStorage.setItem("unit", res.data.user.unit);
+          window.sessionStorage.setItem("post", res.data.user.post);
+          return true;
+        } else {
+          window.sessionStorage.setItem("auth-token", "");
+          window.sessionStorage.setItem("username", "");
+          window.sessionStorage.setItem("id", "");
+          window.sessionStorage.setItem("unit", "");
+          window.sessionStorage.setItem("post", "");
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        window.sessionStorage.setItem("auth-token", "");
+        window.sessionStorage.setItem("username", "");
+        window.sessionStorage.setItem("id", "");
+        window.sessionStorage.setItem("unit", "");
+        window.sessionStorage.setItem("post", "");
+        return false;
+      });
+  }
+
+  isLogin() {
+    const token = window.sessionStorage.getItem("auth-token");
+    if (token === undefined || token === null || token === "") {
       return false;
     } else {
-      const token = window.sessionStorage.getItem("auth-token");
-
-      if (token !== "") {
-        return true;
-      } else {
-        window.sessionStorage.setItem("error", "session");
-        logout();
-        return false;
-      }
+      return true;
     }
-  };
+  }
 
-  return (
-    <Router>
-      <UserContext.Provider value={{ userData, setUserData }}>
+  render() {
+    return (
+      <Router>
         <Switch>
           <Route
             path="/opd_tc_dashboard"
             exact
-            render={() => (isLogin() ? <TcDashboard /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <TcDashboard /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_tc_dashboard/records"
             exact
-            render={() => (isLogin() ? <TcRecords /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <TcRecords /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_cd_dashboard"
             exact
-            render={() => (isLogin() ? <CdDashboard /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <CdDashboard /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_cd_dashboard/records"
             exact
-            render={() => (isLogin() ? <CdRecords /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <CdRecords /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_dis_dashboard"
             exact
-            render={() => (isLogin() ? <DisDashboard /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <DisDashboard /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_dis_dashboard/opd_drug_store"
             exact
-            render={() => (isLogin() ? <OpdDrugStore /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <OpdDrugStore /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_ad_dashboard"
             exact
-            render={() => (isLogin() ? <AdDashboard /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <AdDashboard /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_ad_dashboard/records"
             exact
-            render={() => (isLogin() ? <AdRecords /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <AdRecords /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_ic_dashboard"
             exact
-            render={() => (isLogin() ? <IcDashboard /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <IcDashboard /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_ic_dashboard/records"
             exact
-            render={() => (isLogin() ? <IcRecords /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <IcRecords /> : <Redirect to="/" />
+            }
           />
           <Route
             path="/opd_ic_dashboard/reports"
             exact
-            render={() => (isLogin() ? <IcReports /> : <Redirect to="/" />)}
+            render={() =>
+              this.isLogin() ? <IcReports /> : <Redirect to="/" />
+            }
           />
           <Route path="/" exact component={Login} />
+          <Redirect to="/" />
         </Switch>
-      </UserContext.Provider>
-    </Router>
-  );
-};
-
-export default App;
+      </Router>
+    );
+  }
+}

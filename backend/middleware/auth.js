@@ -13,7 +13,11 @@ function auth(req, res, next) {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     //add user from payload
-    req.user = decodedToken;
+    req.userData = {
+      userId: decodedToken.id,
+      post: decodedToken.post,
+      unit: decodedToken.unit,
+    };
     next();
   } catch (e) {
     res.status(400).json({ msg: "Token is not valid, authorization denied" });

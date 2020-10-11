@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 
 import VisitDetails from "../dashboard/VisitDetails";
+import LoadingModal from "../../../shared/components/LoadingModal";
 
 import Moment from "moment";
 
@@ -18,6 +19,7 @@ export default class PatientDetails extends Component {
     this.state = {
       patient: {},
       consultations: [],
+      loading: false,
     };
 
     this.getVisits = this.getVisits.bind(this);
@@ -25,6 +27,7 @@ export default class PatientDetails extends Component {
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     let patient = undefined;
     Axios.get(
@@ -50,7 +53,8 @@ export default class PatientDetails extends Component {
       }
     )
       .then((res) => {
-        this.setState({ consultations: res.data }, () => {});
+        this.setState({ consultations: res.data });
+        this.setState({ loading: false });
       })
       .catch((error) => {
         console.log(error);
@@ -108,6 +112,16 @@ export default class PatientDetails extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         {this.state.currentComponent === "view_visit" ? (
           <div>
             <VisitDetails

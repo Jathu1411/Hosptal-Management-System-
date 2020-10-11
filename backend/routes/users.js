@@ -2,7 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
-const HttpError =  require("../models/http-error");
+const HttpError = require("../models/http-error");
 
 require("dotenv").config();
 
@@ -34,14 +34,14 @@ router.route("/all_users").get(auth, (req, res) => {
 
 //get a particular user and data
 router.route("/").get(auth, (req, res) => {
-  User.findById(req.user.id)
+  User.findById(req.userData.userId)
     .select("-password")
     .then((user) => res.json(user))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
 //register a user
-router.route("/register").post((req, res) => {
+router.route("/register").post(auth, (req, res) => {
   const { username, password, name, nic, post, unit, phone, grade } = req.body;
 
   if (!username || !password || !name || !nic) {
@@ -62,6 +62,7 @@ router.route("/register").post((req, res) => {
       phone,
       grade,
     });
+
     //hashing the password
     bcrypt.genSalt(12, (err, salt) => {
       bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -74,13 +75,12 @@ router.route("/register").post((req, res) => {
               {
                 id: user.id,
                 username: user.username,
-                nic: user.nic,
                 name: user.name,
                 post: user.post,
                 unit: user.unit,
               },
               process.env.JWT_SECRET,
-              { expiresIn: 3600 },
+              { expiresIn: "1h" },
               (err, token) => {
                 if (err) throw err;
                 res.json({
@@ -89,7 +89,6 @@ router.route("/register").post((req, res) => {
                     username: user.username,
                     id: user.id,
                     name: user.name,
-                    nic: user.nic,
                     post: user.post,
                     unit: user.unit,
                   },
@@ -123,13 +122,12 @@ router.route("/auth").post((req, res) => {
         {
           id: user.id,
           username: user.username,
-          nic: user.nic,
           name: user.name,
           post: user.post,
           unit: user.unit,
         },
         process.env.JWT_SECRET,
-        { expiresIn: 3600 },
+        { expiresIn: "1h" },
         (err, token) => {
           if (err) throw err;
           res.json({
@@ -138,7 +136,6 @@ router.route("/auth").post((req, res) => {
               username: user.username,
               id: user.id,
               name: user.name,
-              nic: user.nic,
               post: user.post,
               unit: user.unit,
             },
@@ -153,15 +150,22 @@ router.route("/auth").post((req, res) => {
 router.route("/tokenIsValid").post((req, res) => {
   try {
     const token = req.header("x-auth-token");
-    if (!token) return res.json(false);
+    if (!token) return res.json({ valid: false });
 
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    if (!verified) return res.json(false);
+    if (!verified) return res.json({ valid: false });
 
     const user = User.findById(verified.id);
-    if (!user) return res.json(false);
+    if (!user) return res.json({ valid: false });
 
-    return res.json(true);
+    const userInfo = {
+      username: verified.username,
+      id: verified.id,
+      unit: verified.unit,
+      post: verified.post,
+    };
+
+    return res.json({ valid: true, user: userInfo });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const HttpError =  require("../models/http-error");
+const HttpError = require("../models/http-error");
 let Patient = require("../models/patient.model");
 let Consultation = require("../models/consultation.model");
 
@@ -26,6 +26,9 @@ add to the consultation -
 
 //get all patients
 router.route("/all_patients").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.find()
     .sort({ name: 1 })
     .limit(20)
@@ -34,7 +37,10 @@ router.route("/all_patients").get(auth, (req, res) => {
 });
 
 //get all matching patients by name
-router.route("/all_patients/name/:key").get((req, res) => {
+router.route("/all_patients/name/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.find({ name: { $regex: req.params.key, $options: "i" } })
     .sort({ name: 1 })
     .limit(10)
@@ -43,7 +49,10 @@ router.route("/all_patients/name/:key").get((req, res) => {
 });
 
 //get all matching patients by nic
-router.route("/all_patients/nic/:key").get((req, res) => {
+router.route("/all_patients/nic/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.find({ nic: { $regex: req.params.key, $options: "i" } })
     .sort({ name: 1 })
     .limit(10)
@@ -52,7 +61,10 @@ router.route("/all_patients/nic/:key").get((req, res) => {
 });
 
 //check whether a patient nic exists
-router.route("/patient_exist/:nic").get((req, res) => {
+router.route("/patient_exist/:nic").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (req.params.nic !== "") {
     Patient.exists({ nic: req.params.nic })
       .then((result) => res.json(result))
@@ -63,21 +75,31 @@ router.route("/patient_exist/:nic").get((req, res) => {
 });
 
 //get a patient
-router.route("/:id").get((req, res) => {
+router.route("/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.findById(req.params.id)
     .then((patient) => res.json(patient))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
 //get a patient's consultations
-router.route("/consultations/:id").get((req, res) => {
+router.route("/consultations/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Consultation.find({ patient: req.params.id })
     .then((consultations) => res.json(consultations))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
 //add a patient
-router.route("/add").post((req, res) => {
+router.route("/add").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
+
   const nic = req.body.nic;
   const name = req.body.name;
   const dob = Date.parse(req.body.dob);
@@ -101,7 +123,10 @@ router.route("/add").post((req, res) => {
 });
 
 //update a patient
-router.route("/update/:id").post((req, res) => {
+router.route("/update/:id").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.findById(req.params.id)
     .then((patient) => {
       patient.nic = req.body.nic;
@@ -121,14 +146,20 @@ router.route("/update/:id").post((req, res) => {
 });
 
 //delete a patient
-router.route("/:id").delete((req, res) => {
+router.route("/:id").delete(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.findByIdAndDelete(req.params.id)
     .then((patient) => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
 //add a patient to consultation
-router.route("/consult/:id").post((req, res) => {
+router.route("/consult/:id").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Ticket Clerk") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.findByIdAndUpdate(req.params.id, { stage: "registered" })
     .then((patient) => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));

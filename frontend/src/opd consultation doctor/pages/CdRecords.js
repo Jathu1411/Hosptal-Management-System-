@@ -10,6 +10,7 @@ import AllPatientList from "../components/records/AllPatientList";
 import AllSearchPatientList from "../components/records/AllSearchPatientList";
 import PatientDetails from "../components/records/PatientDetails.js";
 import SuccessNotice from "../../shared/components/ErrorNotice";
+import LoadingModal from "../../shared/components/LoadingModal";
 
 export default class CdRecords extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class CdRecords extends Component {
       searchedPatients: [],
       currentPatient: undefined,
       success: undefined,
+      loading: false,
     };
 
     this.onSearchAllPatientsNic = this.onSearchAllPatientsNic.bind(this);
@@ -33,12 +35,14 @@ export default class CdRecords extends Component {
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_consultant/all_patients", {
       headers: { "x-auth-token": token },
     })
       .then((res) => {
         this.setState({ patients: res.data });
+        this.setState({ loading: false });
       })
       .catch((error) => {
         console.log(error);
@@ -141,6 +145,16 @@ export default class CdRecords extends Component {
   render() {
     return (
       <div>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <div style={{ minHeight: "calc(100vh - 70px" }}>
           <CdNavbar />
           <div style={{ paddingTop: "60px" }}>
