@@ -116,7 +116,9 @@ router.route("/auth").post((req, res) => {
 
     //validating password
     bcrypt.compare(password, user.password).then((isMatch) => {
-      if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+      if (!isMatch) {
+        return res.status(400).json({ msg: "Invalid credentials" });
+      }
 
       jwt.sign(
         {

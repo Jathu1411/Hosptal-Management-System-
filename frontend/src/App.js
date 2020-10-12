@@ -20,6 +20,7 @@ import AdRecords from "./opd admission doctor/pages/AdRecords";
 import IcDashboard from "./opd in charge/pages/IcDashboard";
 import IcRecords from "./opd in charge/pages/IcRecords";
 import IcReports from "./opd in charge/pages/IcReports";
+import NotAuthorized from "./shared/pages/NotAuthorized";
 
 export default class App extends Component {
   constructor(props) {
@@ -31,13 +32,11 @@ export default class App extends Component {
     this.state = {
       token: undefined,
       user: undefined,
-      logedIn: false,
     };
   }
 
   componentDidMount() {
-    let li = this.isLogined();
-    this.setState({ logedIn: li });
+    this.isLogined();
   }
 
   isLogined() {
@@ -63,15 +62,15 @@ export default class App extends Component {
           //not needed
           window.sessionStorage.setItem("username", res.data.user.username);
           window.sessionStorage.setItem("id", res.data.user.id);
-          window.sessionStorage.setItem("unit", res.data.user.unit);
-          window.sessionStorage.setItem("post", res.data.user.post);
+          // window.sessionStorage.setItem("unit", res.data.user.unit);
+          // window.sessionStorage.setItem("post", res.data.user.post);
           return true;
         } else {
           window.sessionStorage.setItem("auth-token", "");
           window.sessionStorage.setItem("username", "");
           window.sessionStorage.setItem("id", "");
-          window.sessionStorage.setItem("unit", "");
-          window.sessionStorage.setItem("post", "");
+          // window.sessionStorage.setItem("unit", "");
+          // window.sessionStorage.setItem("post", "");
           return false;
         }
       })
@@ -80,8 +79,8 @@ export default class App extends Component {
         window.sessionStorage.setItem("auth-token", "");
         window.sessionStorage.setItem("username", "");
         window.sessionStorage.setItem("id", "");
-        window.sessionStorage.setItem("unit", "");
-        window.sessionStorage.setItem("post", "");
+        // window.sessionStorage.setItem("unit", "");
+        // window.sessionStorage.setItem("post", "");
         return false;
       });
   }
@@ -174,6 +173,13 @@ export default class App extends Component {
             exact
             render={() =>
               this.isLogin() ? <IcReports /> : <Redirect to="/" />
+            }
+          />
+          <Route
+            path="/unauthorized"
+            exact
+            render={() =>
+              this.isLogin() ? <NotAuthorized /> : <Redirect to="/" />
             }
           />
           <Route path="/" exact component={Login} />

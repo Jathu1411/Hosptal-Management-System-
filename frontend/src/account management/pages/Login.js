@@ -5,8 +5,8 @@ import Axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-// import ValidationModal from "../../shared/components/NoticeModal";
-// import LoadingModal from "../../shared/components/LoadingModal";
+import ValidationModal from "../../shared/components/NoticeModal";
+import LoadingModal from "../../shared/components/LoadingModal";
 
 import "./Login.css";
 
@@ -28,7 +28,41 @@ class Login extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    //get the local token
+    let tokenSession = window.sessionStorage.getItem("auth-token");
+
+    //if there no local token create blank local token
+    if (tokenSession === null) {
+      window.sessionStorage.setItem("auth-token", "");
+      tokenSession = "";
+    }
+
+    //send the local token to check it is valid
+    Axios.post(
+      "http://localhost:5000/api/users/tokenIsValid",
+      {},
+      { headers: { "x-auth-token": tokenSession } }
+    )
+      .then((res) => {
+        //if token is valid set the user data and token in local
+        if (res.data.valid) {
+          window.sessionStorage.setItem("username", res.data.user.username);
+          window.sessionStorage.setItem("id", res.data.user.id);
+          this.forwardDashboard(`${res.data.user.unit} ${res.data.user.post}`);
+        } else {
+          window.sessionStorage.setItem("auth-token", "");
+          window.sessionStorage.setItem("username", "");
+          window.sessionStorage.setItem("id", "");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        window.sessionStorage.setItem("auth-token", "");
+        window.sessionStorage.setItem("username", "");
+        window.sessionStorage.setItem("id", "");
+      });
+  }
 
   //onchange functions
   onChangeUsername(e) {
@@ -41,6 +75,28 @@ class Login extends Component {
     this.setState({
       password: e.target.value,
     });
+  }
+
+  forwardDashboard(title) {
+    switch (title) {
+      case "OPD Ticket Clerk":
+        this.props.history.push("/opd_tc_dashboard");
+        break;
+      case "OPD Consultion Doctor":
+        this.props.history.push("/opd_cd_dashboard");
+        break;
+      case "OPD Dispenser":
+        this.props.history.push("/opd_dis_dashboard");
+        break;
+      case "OPD Admission Doctor":
+        this.props.history.push("/opd_ad_dashboard");
+        break;
+      case "OPD OPD In Charge":
+        this.props.history.push("/opd_ic_dashboard");
+        break;
+      default:
+        this.props.history.push("/");
+    }
   }
 
   submit(e) {
@@ -65,38 +121,18 @@ class Login extends Component {
       this.setState({ loading: true });
       Axios.post("http://localhost:5000/api/users/auth", loginUser)
         .then((res) => {
-          this.setState({ loading: false });
           window.sessionStorage.setItem("auth-token", res.data.token);
-          //not needed
           window.sessionStorage.setItem("username", res.data.user.username);
           window.sessionStorage.setItem("id", res.data.user.id);
-          window.sessionStorage.setItem("unit", res.data.user.unit);
-          window.sessionStorage.setItem("post", res.data.user.post);
-
-          console.log(`${res.data.user.unit} ${res.data.user.post}`);
-
-          switch (`${res.data.user.unit} ${res.data.user.post}`) {
-            case "OPD Ticket Clerk":
-              this.props.history.push("/opd_tc_dashboard");
-              break;
-            case "OPD Consultion Doctor":
-              this.props.history.push("/opd_cd_dashboard");
-              break;
-            case "OPD Dispenser":
-              this.props.history.push("/opd_dis_dashboard");
-              break;
-            case "OPD Admission Doctor":
-              this.props.history.push("/opd_ad_dashboard");
-              break;
-            case "OPD OPD In Charge":
-              this.props.history.push("/opd_ic_dashboard");
-              break;
-            default:
-              this.props.history.push("/");
-          }
+          this.forwardDashboard(`${res.data.user.unit} ${res.data.user.post}`);
         })
         .catch((error) => {
           console.log(error);
+          this.setState({ loading: false });
+          this.setState({
+            modalMessage: "Username and password do not match",
+          });
+          this.setState({ modalShow: true });
         });
     }
   }
@@ -104,6 +140,16 @@ class Login extends Component {
   render() {
     return (
       <div style={{ height: "100vh" }}>
+        {this.state.loading ? (
+          <div>
+            <LoadingModal
+              show={this.state.loading}
+              onHide={() => this.setState({ loading: false })}
+            ></LoadingModal>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <div className="login-container">
           <div className="text-center" style={{ height: "100%" }}>
             <div className="align-vertical">
@@ -125,7 +171,6 @@ class Login extends Component {
                     type="text"
                     placeholder="Username"
                     className="form-control"
-                    required
                     autoFocus
                     onChange={this.onChangeUsername}
                   />
@@ -137,7 +182,6 @@ class Login extends Component {
                     type="password"
                     placeholder="Password"
                     className="form-control"
-                    required
                     onChange={this.onChangePassword}
                   />
                 </Form.Group>
@@ -152,6 +196,12 @@ class Login extends Component {
             </div>
           </div>
         </div>
+        <ValidationModal
+          show={this.state.modalShow}
+          onHide={() => this.setState({ modalShow: false })}
+          title="Attention!"
+          message={this.state.modalMessage}
+        />
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import Axios from "axios";
 
 import Container from "react-bootstrap/Container";
@@ -14,7 +15,7 @@ import SuccessNotice from "../../shared/components/ErrorNotice";
 import LoadingModal from "../../shared/components/LoadingModal";
 import Footer from "../../shared/components/Footer";
 
-export default class CdDashboard extends Component {
+class CdDashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -43,6 +44,45 @@ export default class CdDashboard extends Component {
   }
 
   componentDidMount() {
+    //get the local token
+    let tokenSession = window.sessionStorage.getItem("auth-token");
+
+    //if there no local token create blank local token
+    if (tokenSession === null) {
+      window.sessionStorage.setItem("auth-token", "");
+      return false;
+    }
+
+    //send the local token to check it is valid
+    Axios.post(
+      "http://localhost:5000/api/users/tokenIsValid",
+      {},
+      { headers: { "x-auth-token": tokenSession } }
+    )
+      .then((res) => {
+        //if token is valid set the user data and token in local
+        if (res.data.valid) {
+          if (
+            `${res.data.user.unit} ${res.data.user.post}` ===
+            "OPD Consultion Doctor"
+          ) {
+            window.sessionStorage.setItem("id", res.data.user.id);
+          } else {
+            this.props.history.push("/unauthorized");
+          }
+        } else {
+          window.sessionStorage.setItem("auth-token", "");
+          window.sessionStorage.setItem("id", "");
+          this.props.history.push("/unauthorized");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        window.sessionStorage.setItem("auth-token", "");
+        window.sessionStorage.setItem("id", "");
+        this.props.history.push("/unauthorized");
+      });
+
     this.setState({ loading: true });
     const token = window.sessionStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_consultant/waiting_patients", {
@@ -252,3 +292,5 @@ export default class CdDashboard extends Component {
     );
   }
 }
+
+export default withRouter(CdDashboard);

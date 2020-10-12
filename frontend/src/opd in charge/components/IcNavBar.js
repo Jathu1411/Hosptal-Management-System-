@@ -27,8 +27,6 @@ export default function CdNavBar() {
     window.sessionStorage.setItem("auth-token", "");
     window.sessionStorage.setItem("username", "");
     window.sessionStorage.setItem("id", "");
-    window.sessionStorage.setItem("unit", "");
-    window.sessionStorage.setItem("post", "");
     history.push("/");
   };
 
