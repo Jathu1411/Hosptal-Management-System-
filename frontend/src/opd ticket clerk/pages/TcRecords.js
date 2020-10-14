@@ -41,11 +41,11 @@ class TcRecords extends Component {
 
   componentDidMount() {
     //get the local token
-    let tokenSession = window.sessionStorage.getItem("auth-token");
+    let tokenSession = localStorage.getItem("auth-token");
 
     //if there no local token create blank local token
     if (tokenSession === null) {
-      window.sessionStorage.setItem("auth-token", "");
+      localStorage.setItem("auth-token", "");
       return false;
     }
 
@@ -61,25 +61,25 @@ class TcRecords extends Component {
           if (
             `${res.data.user.unit} ${res.data.user.post}` === "OPD Ticket Clerk"
           ) {
-            window.sessionStorage.setItem("id", res.data.user.id);
+            localStorage.setItem("id", res.data.user.id);
           } else {
             this.props.history.push("/unauthorized");
           }
         } else {
-          window.sessionStorage.setItem("auth-token", "");
-          window.sessionStorage.setItem("id", "");
+          localStorage.setItem("auth-token", "");
+          localStorage.setItem("id", "");
           this.props.history.push("/unauthorized");
         }
       })
       .catch((error) => {
         console.log(error);
-        window.sessionStorage.setItem("auth-token", "");
-        window.sessionStorage.setItem("id", "");
+        localStorage.setItem("auth-token", "");
+        localStorage.setItem("id", "");
         this.props.history.push("/unauthorized");
       });
 
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
       headers: { "x-auth-token": token },
     })
@@ -127,7 +127,7 @@ class TcRecords extends Component {
   //search functions
   onSearchAllPatientsName(e) {
     if (e.target.value.trim() !== "") {
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_tc/all_patients/name/" + e.target.value,
         {
@@ -150,7 +150,7 @@ class TcRecords extends Component {
 
   onSearchAllPatientsNic(e) {
     if (e.target.value.trim() !== "") {
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_tc/all_patients/nic/" + e.target.value,
         {
@@ -184,7 +184,7 @@ class TcRecords extends Component {
   toDeletePatient(id) {
     let success = undefined;
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.delete("http://localhost:5000/api/opd_tc/" + id, {
       headers: { "x-auth-token": token },
     }).then((res) => {
@@ -214,7 +214,7 @@ class TcRecords extends Component {
   toConsultation(id) {
     let success = undefined;
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.post("http://localhost:5000/api/opd_tc//consult/" + id, {
       headers: { "x-auth-token": token },
     })
@@ -281,7 +281,7 @@ class TcRecords extends Component {
 
   editFinish(id) {
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_tc/all_patients", {
       headers: { "x-auth-token": token },
     })

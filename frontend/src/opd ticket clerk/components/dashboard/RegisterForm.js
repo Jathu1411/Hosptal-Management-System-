@@ -54,7 +54,7 @@ export default class RegisterForm extends Component {
     });
     if (e.target.value.trim() !== "" && e.target.value.trim().length === 10) {
       //check whether patient already exists
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_tc/patient_exist/" + e.target.value,
         {
@@ -145,7 +145,7 @@ export default class RegisterForm extends Component {
     } else {
       this.setState({ loading: true });
       //check whether patient already exists
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_tc/patient_exist/" + this.state.nic,
         {
@@ -171,7 +171,7 @@ export default class RegisterForm extends Component {
               phone: this.state.phone,
             };
 
-            const token = window.sessionStorage.getItem("auth-token");
+            const token = localStorage.getItem("auth-token");
             Axios.post("http://localhost:5000/api/opd_tc/add", patient, {
               headers: { "x-auth-token": token },
             }).then((res) => {

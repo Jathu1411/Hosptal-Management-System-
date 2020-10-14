@@ -29,7 +29,7 @@ export default class PatientDetails extends Component {
 
   componentDidMount() {
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     let patient = undefined;
     Axios.get("http://localhost:5000/api/opd_tc/" + this.props.patient._id, {
       headers: { "x-auth-token": token },

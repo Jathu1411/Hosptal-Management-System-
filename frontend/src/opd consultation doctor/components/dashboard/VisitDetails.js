@@ -29,7 +29,7 @@ export default class VisitDetails extends Component {
   componentDidMount() {
     this.setState({ loading: true });
     //get patient info from server
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get(
       "http://localhost:5000/api/opd_consultant/" + this.props.patientId,
       {

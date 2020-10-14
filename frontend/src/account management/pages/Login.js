@@ -30,38 +30,51 @@ class Login extends Component {
 
   componentDidMount() {
     //get the local token
-    let tokenSession = window.sessionStorage.getItem("auth-token");
+    let tokenSession = localStorage.getItem("auth-token");
 
     //if there no local token create blank local token
     if (tokenSession === null) {
-      window.sessionStorage.setItem("auth-token", "");
+      localStorage.setItem("auth-token", "");
       tokenSession = "";
     }
 
-    //send the local token to check it is valid
-    Axios.post(
-      "http://localhost:5000/api/users/tokenIsValid",
-      {},
-      { headers: { "x-auth-token": tokenSession } }
-    )
-      .then((res) => {
-        //if token is valid set the user data and token in local
-        if (res.data.valid) {
-          window.sessionStorage.setItem("username", res.data.user.username);
-          window.sessionStorage.setItem("id", res.data.user.id);
-          this.forwardDashboard(`${res.data.user.unit} ${res.data.user.post}`);
-        } else {
-          window.sessionStorage.setItem("auth-token", "");
-          window.sessionStorage.setItem("username", "");
-          window.sessionStorage.setItem("id", "");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        window.sessionStorage.setItem("auth-token", "");
-        window.sessionStorage.setItem("username", "");
-        window.sessionStorage.setItem("id", "");
-      });
+    const expiration = localStorage.getItem("expiration");
+
+    if (new Date(expiration) > new Date()) {
+      //send the local token to check it is valid
+      Axios.post(
+        "http://localhost:5000/api/users/tokenIsValid",
+        {},
+        { headers: { "x-auth-token": tokenSession } }
+      )
+        .then((res) => {
+          //if token is valid set the user data and token in local
+          if (res.data.valid) {
+            localStorage.setItem("username", res.data.user.username);
+            localStorage.setItem("id", res.data.user.id);
+            this.forwardDashboard(
+              `${res.data.user.unit} ${res.data.user.post}`
+            );
+          } else {
+            localStorage.setItem("auth-token", "");
+            localStorage.setItem("username", "");
+            localStorage.setItem("id", "");
+            localStorage.setItem("expiration", "");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          localStorage.setItem("auth-token", "");
+          localStorage.setItem("username", "");
+          localStorage.setItem("id", "");
+          localStorage.setItem("expiration", "");
+        });
+    } else {
+      localStorage.setItem("auth-token", "");
+      localStorage.setItem("username", "");
+      localStorage.setItem("id", "");
+      localStorage.setItem("expiration", "");
+    }
   }
 
   //onchange functions
@@ -121,9 +134,13 @@ class Login extends Component {
       this.setState({ loading: true });
       Axios.post("http://localhost:5000/api/users/auth", loginUser)
         .then((res) => {
-          window.sessionStorage.setItem("auth-token", res.data.token);
-          window.sessionStorage.setItem("username", res.data.user.username);
-          window.sessionStorage.setItem("id", res.data.user.id);
+          localStorage.setItem("auth-token", res.data.token);
+          localStorage.setItem("username", res.data.user.username);
+          localStorage.setItem("id", res.data.user.id);
+          const tokenExpirationDate = new Date(
+            new Date().getTime() + 1000 * 60 * 60
+          );
+          localStorage.setItem("expiration", tokenExpirationDate.toISOString());
           this.forwardDashboard(`${res.data.user.unit} ${res.data.user.post}`);
         })
         .catch((error) => {

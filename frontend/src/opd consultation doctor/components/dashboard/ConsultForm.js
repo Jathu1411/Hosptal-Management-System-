@@ -51,7 +51,7 @@ export default class ConsultForm extends Component {
   componentDidMount() {
     //get patient info from server
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get(
       "http://localhost:5000/api/opd_consultant/" + this.props.patient._id,
       {
@@ -141,11 +141,11 @@ export default class ConsultForm extends Component {
         disease: this.state.disease,
         notes: this.state.notes,
         patientId: this.state.patient._id,
-        consultant: window.sessionStorage.getItem("id"),
+        consultant: localStorage.getItem("id"),
       };
 
       this.setState({ loading: true });
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
       }).then((res) => {
@@ -191,11 +191,11 @@ export default class ConsultForm extends Component {
         disease: this.state.disease,
         notes: this.state.notes,
         patientId: this.state.patient._id,
-        consultant: window.sessionStorage.getItem("id"),
+        consultant: localStorage.getItem("id"),
       };
 
       this.setState({ loading: true });
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
       }).then((res) => {
@@ -241,11 +241,11 @@ export default class ConsultForm extends Component {
         disease: this.state.disease,
         notes: this.state.notes,
         patientId: this.state.patient._id,
-        consultant: window.sessionStorage.getItem("id"),
+        consultant: localStorage.getItem("id"),
       };
 
       this.setState({ loading: true });
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
       }).then((res) => {

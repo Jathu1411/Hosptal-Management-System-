@@ -43,7 +43,7 @@ export default class PrescriptionForm extends Component {
   componentDidMount() {
     //get patient info from server
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get(
       "http://localhost:5000/api/opd_consultant/" + this.props.patient._id,
       {
@@ -98,7 +98,7 @@ export default class PrescriptionForm extends Component {
   //onsubmit funcitons
   onSubmitPrescribe() {
     const prescription = this.state.prescription;
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     this.setState({ loading: true });
     Axios.post(
       "http://localhost:5000/api/opd_consultant/prescribe/" +
@@ -124,7 +124,7 @@ export default class PrescriptionForm extends Component {
   //search functions
   onSearchDrug(e) {
     if (e.target.value.trim() !== "") {
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_consultant/prescribe/drugs/" +
           e.target.value,

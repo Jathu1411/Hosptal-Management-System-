@@ -18,7 +18,7 @@ export default class AllWaitingPatientList extends Component {
   }
 
   componentDidMount() {
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_consultant/waiting_patients", {
       headers: { "x-auth-token": token },
     })

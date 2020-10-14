@@ -45,11 +45,11 @@ class CdDashboard extends Component {
 
   componentDidMount() {
     //get the local token
-    let tokenSession = window.sessionStorage.getItem("auth-token");
+    let tokenSession = localStorage.getItem("auth-token");
 
     //if there no local token create blank local token
     if (tokenSession === null) {
-      window.sessionStorage.setItem("auth-token", "");
+      localStorage.setItem("auth-token", "");
       return false;
     }
 
@@ -66,25 +66,25 @@ class CdDashboard extends Component {
             `${res.data.user.unit} ${res.data.user.post}` ===
             "OPD Consultion Doctor"
           ) {
-            window.sessionStorage.setItem("id", res.data.user.id);
+            localStorage.setItem("id", res.data.user.id);
           } else {
             this.props.history.push("/unauthorized");
           }
         } else {
-          window.sessionStorage.setItem("auth-token", "");
-          window.sessionStorage.setItem("id", "");
+          localStorage.setItem("auth-token", "");
+          localStorage.setItem("id", "");
           this.props.history.push("/unauthorized");
         }
       })
       .catch((error) => {
         console.log(error);
-        window.sessionStorage.setItem("auth-token", "");
-        window.sessionStorage.setItem("id", "");
+        localStorage.setItem("auth-token", "");
+        localStorage.setItem("id", "");
         this.props.history.push("/unauthorized");
       });
 
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_consultant/waiting_patients", {
       headers: { "x-auth-token": token },
     })
@@ -123,7 +123,7 @@ class CdDashboard extends Component {
   //search functions
   onSearchWaitingPatientsName(e) {
     if (e.target.value.trim() !== "") {
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_consultant/waiting_patients/name/" +
           e.target.value,
@@ -146,7 +146,7 @@ class CdDashboard extends Component {
 
   onSearchWaitingPatientsNic(e) {
     if (e.target.value.trim() !== "") {
-      const token = window.sessionStorage.getItem("auth-token");
+      const token = localStorage.getItem("auth-token");
       Axios.get(
         "http://localhost:5000/api/opd_consultant/waiting_patients/nic/" +
           e.target.value,

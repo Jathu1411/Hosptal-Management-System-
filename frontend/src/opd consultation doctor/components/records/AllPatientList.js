@@ -18,7 +18,7 @@ export default class AllPatientList extends Component {
   }
 
   componentDidMount() {
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get("http://localhost:5000/api/opd_consultant/all_patients", {
       headers: { "x-auth-token": token },
     })

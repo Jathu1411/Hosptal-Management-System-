@@ -11,7 +11,7 @@ import logo from "../../account management/pages/LOGO_192.png";
 
 export default function TcNavBar() {
   const history = useHistory();
-  const username = window.sessionStorage.getItem("username");
+  const username = localStorage.getItem("username");
 
   const isMobileDevice = useMediaQuery({
     query: "(max-device-width: 1200px)",
@@ -24,9 +24,10 @@ export default function TcNavBar() {
   const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
 
   const logout = () => {
-    window.sessionStorage.setItem("auth-token", "");
-    window.sessionStorage.setItem("username", "");
-    window.sessionStorage.setItem("id", "");
+    localStorage.setItem("auth-token", "");
+    localStorage.setItem("username", "");
+    localStorage.setItem("id", "");
+    localStorage.setItem("expiration", "");
     history.push("/");
   };
 

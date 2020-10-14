@@ -35,7 +35,7 @@ export default class ReferenceForm extends Component {
   componentDidMount() {
     //get patient info from server
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.get(
       "http://localhost:5000/api/opd_consultant/" + this.props.patient._id,
       {
@@ -84,7 +84,7 @@ export default class ReferenceForm extends Component {
       treatmentsProvided: this.state.treatment,
     };
     this.setState({ loading: true });
-    const token = window.sessionStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token");
     Axios.post(
       "http://localhost:5000/api/opd_consultant/add_cref/" +
         this.state.consultation._id,

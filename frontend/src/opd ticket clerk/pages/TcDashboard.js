@@ -10,11 +10,11 @@ import Container from "react-bootstrap/Container";
 class TcDashboard extends Component {
   componentDidMount() {
     //get the local token
-    let tokenSession = window.sessionStorage.getItem("auth-token");
+    let tokenSession = localStorage.getItem("auth-token");
 
     //if there no local token create blank local token
     if (tokenSession === null) {
-      window.sessionStorage.setItem("auth-token", "");
+      localStorage.setItem("auth-token", "");
       return false;
     }
 
@@ -30,20 +30,20 @@ class TcDashboard extends Component {
           if (
             `${res.data.user.unit} ${res.data.user.post}` === "OPD Ticket Clerk"
           ) {
-            window.sessionStorage.setItem("id", res.data.user.id);
+            localStorage.setItem("id", res.data.user.id);
           } else {
             this.props.history.push("/unauthorized");
           }
         } else {
-          window.sessionStorage.setItem("auth-token", "");
-          window.sessionStorage.setItem("id", "");
+          localStorage.setItem("auth-token", "");
+          localStorage.setItem("id", "");
           this.props.history.push("/unauthorized");
         }
       })
       .catch((error) => {
         console.log(error);
-        window.sessionStorage.setItem("auth-token", "");
-        window.sessionStorage.setItem("id", "");
+        localStorage.setItem("auth-token", "");
+        localStorage.setItem("id", "");
         this.props.history.push("/unauthorized");
       });
   }

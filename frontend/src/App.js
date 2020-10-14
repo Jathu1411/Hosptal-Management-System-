@@ -41,14 +41,13 @@ export default class App extends Component {
 
   isLogined() {
     //get the local token
-    let tokenSession = window.sessionStorage.getItem("auth-token");
+    let tokenSession = localStorage.getItem("auth-token");
 
     //if there no local token create blank local token
     if (tokenSession === null) {
-      window.sessionStorage.setItem("auth-token", "");
+      localStorage.setItem("auth-token", "");
       tokenSession = "";
     }
-    //this.setState({ token: tokenSession });
 
     //send the local token to check it is valid
     Axios.post(
@@ -58,36 +57,36 @@ export default class App extends Component {
     )
       .then((res) => {
         //if token is valid set the user data and token in local
-        if (res.data.valid) {
+        if (res.data.valid && this.isLogin()) {
           //not needed
-          window.sessionStorage.setItem("username", res.data.user.username);
-          window.sessionStorage.setItem("id", res.data.user.id);
-          // window.sessionStorage.setItem("unit", res.data.user.unit);
-          // window.sessionStorage.setItem("post", res.data.user.post);
-          return true;
+          localStorage.setItem("username", res.data.user.username);
+          localStorage.setItem("id", res.data.user.id);
         } else {
-          window.sessionStorage.setItem("auth-token", "");
-          window.sessionStorage.setItem("username", "");
-          window.sessionStorage.setItem("id", "");
-          // window.sessionStorage.setItem("unit", "");
-          // window.sessionStorage.setItem("post", "");
-          return false;
+          localStorage.setItem("auth-token", "");
+          localStorage.setItem("username", "");
+          localStorage.setItem("id", "");
+          localStorage.setItem("expiration", "");
         }
       })
       .catch((error) => {
         console.log(error);
-        window.sessionStorage.setItem("auth-token", "");
-        window.sessionStorage.setItem("username", "");
-        window.sessionStorage.setItem("id", "");
-        // window.sessionStorage.setItem("unit", "");
-        // window.sessionStorage.setItem("post", "");
-        return false;
+        localStorage.setItem("auth-token", "");
+        localStorage.setItem("username", "");
+        localStorage.setItem("id", "");
+        localStorage.setItem("expiration", "");
       });
   }
 
   isLogin() {
-    const token = window.sessionStorage.getItem("auth-token");
-    if (token === undefined || token === null || token === "") {
+    const expiration = localStorage.getItem("expiration");
+    const token = localStorage.getItem("auth-token");
+    if (
+      token === undefined ||
+      token === null ||
+      token === "" ||
+      expiration === "" ||
+      new Date(expiration) < new Date()
+    ) {
       return false;
     } else {
       return true;
