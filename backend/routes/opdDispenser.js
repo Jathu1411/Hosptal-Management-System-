@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const HttpError = require("../models/http-error");
 const auth = require("../middleware/auth");
 let Patient = require("../models/patient.model");
+let Consultation = require("../models/consultation.model");
+let OpdDrug = require("../models/opdDrug.model");
 let Drug = require("../models/opdDrug.model");
 
 /*Operation
@@ -31,8 +33,42 @@ make a drug action - add a action to drug
 
 //get all patients
 router.route("/all_patients").get(auth, (req, res) => {
+  if (
+    req.userData.unit !== "OPD" ||
+    req.userData.post !== "Consultion Doctor"
+  ) {
+    throw new HttpError("You are not authorized", 401);
+  }
   Patient.find()
+    .sort({ name: 1 })
+    .limit(20)
     .then((patients) => res.json(patients))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get waiting consultations
+router.route("/waiting_consultations").get((req, res) => {
+  // if (
+  //   req.userData.unit !== "OPD" ||
+  //   req.userData.post !== "Consultion Doctor"
+  // ) {
+  //   throw new HttpError("You are not authorized", 401);
+  // }
+  Consultation.find({ stage: "opd_prescribed" })
+    .then((consultations) => res.json(consultations))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a waiting patients
+router.route("/waiting_patients/:id").get((req, res) => {
+  // if (
+  //   req.userData.unit !== "OPD" ||
+  //   req.userData.post !== "Consultion Doctor"
+  // ) {
+  //   throw new HttpError("You are not authorized", 401);
+  // }
+  Patient.findById(req.params.id)
+    .then((patient) => res.json(patient))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
