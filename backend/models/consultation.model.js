@@ -13,6 +13,7 @@ const consultationSchema = new Schema(
     consultant: { type: Schema.Types.ObjectId, ref: "User" },
     drugs: [
       {
+        drugId: { type: Schema.Types.ObjectId, ref: "OpdDrug" },
         drugName: String,
         quantity: Number,
         unit: String,

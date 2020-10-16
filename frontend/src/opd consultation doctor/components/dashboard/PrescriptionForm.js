@@ -147,6 +147,7 @@ export default class PrescriptionForm extends Component {
 
   toAddDrug(drug, amount) {
     const newDrug = {
+      drugId: drug._id,
       drugName: drug.drugName,
       quantity: amount,
       unit: drug.unit,

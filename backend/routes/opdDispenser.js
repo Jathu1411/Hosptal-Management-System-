@@ -8,9 +8,9 @@ let OpdDrug = require("../models/opdDrug.model");
 let Drug = require("../models/opdDrug.model");
 
 /*Operation
-dashboard - get all waiting patients
+****dashboard - get all waiting patients
 - redirect to dashboard page
-search waiting patients - get all patients with opd_prescribed stage
+****search waiting patients - get all patients with opd_prescribed stage
 - redirect to waiting patients search results page
 issue drug - get all drugs prescribed from consultation
 - redirect to issue drug page
@@ -33,10 +33,7 @@ make a drug action - add a action to drug
 
 //get all patients
 router.route("/all_patients").get(auth, (req, res) => {
-  if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
-  ) {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
     throw new HttpError("You are not authorized", 401);
   }
   Patient.find()
@@ -47,13 +44,11 @@ router.route("/all_patients").get(auth, (req, res) => {
 });
 
 //get waiting consultations
-router.route("/waiting_consultations").get((req, res) => {
-  // if (
-  //   req.userData.unit !== "OPD" ||
-  //   req.userData.post !== "Consultion Doctor"
-  // ) {
-  //   throw new HttpError("You are not authorized", 401);
-  // }
+router.route("/waiting_consultations").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  //console.log(hi);
   Consultation.find({ stage: "opd_prescribed" })
     .then((consultations) => res.json(consultations))
     .catch((err) => res.status(400).json("Error: " + err));
@@ -61,10 +56,7 @@ router.route("/waiting_consultations").get((req, res) => {
 
 //get a waiting patients
 router.route("/waiting_patients/:id").get((req, res) => {
-  // if (
-  //   req.userData.unit !== "OPD" ||
-  //   req.userData.post !== "Consultion Doctor"
-  // ) {
+  // if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
   //   throw new HttpError("You are not authorized", 401);
   // }
   Patient.findById(req.params.id)
@@ -72,8 +64,77 @@ router.route("/waiting_patients/:id").get((req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+//Add a complete drug issue
+router.route("/issueComplete/:conId/:pid/:did").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Consultation.findById(req.params.conId)
+    .then((consultation) => {
+      const drugArr = req.body;
+      consultation.drugs = [];
+      drugArr.forEach((drug) => {
+        consultation.drugs.push({
+          drugId: drug.drugId,
+          drugName: drug.drugName,
+          quantity: drug.quantity,
+          unit: drug.unit,
+          state: drug.state,
+        });
+      });
+
+      consultation.stage = "opd_drug_issued";
+      consultation.dispenser = req.params.did;
+
+      consultation
+        .save()
+        .then(() => {
+          Patient.findByIdAndUpdate(req.params.pid, {
+            stage: "treated",
+          }).then(() => res.json("success"));
+        })
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//Add a Incomplete drug issue
+router.route("/issueIncomplete/:conId/:did").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Consultation.findById(req.params.conId)
+    .then((consultation) => {
+      const drugArr = req.body;
+      consultation.drugs = [];
+      drugArr.forEach((drug) => {
+        consultation.drugs.push({
+          drugId: drug.drugId,
+          drugName: drug.drugName,
+          quantity: drug.quantity,
+          unit: drug.unit,
+          state: drug.state,
+        });
+      });
+
+      consultation.stage = "opd_prescribed";
+      consultation.dispenser = req.params.did;
+
+      consultation
+        .save()
+        .then(() => {
+          res.json("success");
+        })
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 //add a drug
 router.route("/add").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
   const drugName = req.body.drugName;
   const drugType = req.body.drugType;
   const availQuantity = req.body.availQuantity;

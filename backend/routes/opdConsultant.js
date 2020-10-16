@@ -279,6 +279,7 @@ router.route("/prescribe/:conId").post(auth, (req, res) => {
       const drugArr = req.body;
       drugArr.forEach((drug) => {
         consultation.drugs.push({
+          drugId: drug.drugId,
           drugName: drug.drugName,
           quantity: drug.quantity,
           unit: drug.unit,

@@ -16,6 +16,7 @@ mongoose.connect(uri, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 
 const connection = mongoose.connection;
@@ -41,12 +42,12 @@ app.use("/api/opd_dispenser", opdDispenserRouter);
 
 //error handling
 app.use((error, req, res, next) => {
-  if(res.headerSent){
-    return next(error)
+  if (res.headerSent) {
+    return next(error);
   }
-  res.status(error.code || 500)
-  res.json({message: error.message || "An unknown error occured!"}) 
-})
+  res.status(error.code || 500);
+  res.json({ message: error.message || "An unknown error occured!" });
+});
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
