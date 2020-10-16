@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 
 export default function ProceedWarningModal(props) {
   const toContinue = () => {
-    props.toContinue();
+    props.tocontinue();
   };
 
   return (

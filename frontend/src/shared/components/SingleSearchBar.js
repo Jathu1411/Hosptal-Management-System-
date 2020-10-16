@@ -10,7 +10,8 @@ const SingleSearchBar = (props) => {
       <Form.Group as={Row} controlId="formHorizontal">
         <Col sm={12}>
           <Form.Control
-            type="text"
+            type="search"
+            autoComplete="off"
             required
             placeholder={props.text}
             onChange={props.onSearch}

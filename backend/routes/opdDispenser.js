@@ -4,7 +4,6 @@ const HttpError = require("../models/http-error");
 const auth = require("../middleware/auth");
 let Patient = require("../models/patient.model");
 let Consultation = require("../models/consultation.model");
-let OpdDrug = require("../models/opdDrug.model");
 let Drug = require("../models/opdDrug.model");
 
 /*Operation
@@ -12,13 +11,13 @@ let Drug = require("../models/opdDrug.model");
 - redirect to dashboard page
 ****search waiting patients - get all patients with opd_prescribed stage
 - redirect to waiting patients search results page
-issue drug - get all drugs prescribed from consultation
+****issue drug - get all drugs prescribed from consultation
 - redirect to issue drug page
 - (after confirming) - update prescribed drug info
 - using that info add drug actions and update drug balance
-view opd drug list - get all drugs
+****view opd drug list - get all drugs
 - redirect to view all drugs page
-search opd drug - find drugs with matching name
+****search opd drug - find drugs with matching name
 - redirect to search results page
 view drug info - get drug with id
 - redirect to view info page
@@ -127,6 +126,17 @@ router.route("/issueIncomplete/:conId/:did").post(auth, (req, res) => {
         })
         .catch((err) => res.status(400).json("Error: " + err));
     })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get all drugs
+router.route("/all_drugs").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Drug.find()
+    .sort({ name: 1 })
+    .then((drugs) => res.json(drugs))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 

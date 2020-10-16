@@ -23,7 +23,7 @@ export default class IssueForm extends Component {
     this.onSubmitIssuedAll = this.onSubmitIssuedAll.bind(this);
     this.onAddItem = this.onAddItem.bind(this);
     this.onRemoveItem = this.onRemoveItem.bind(this);
-    this.toContinue = this.toContinue.bind(this);
+    this.tocontinue = this.tocontinue.bind(this);
 
     this.state = {
       patient: {},
@@ -94,7 +94,7 @@ export default class IssueForm extends Component {
     }
   }
 
-  toContinue() {
+  tocontinue() {
     this.setState({ modalShow: false });
     this.setState({ loading: true });
     const token = localStorage.getItem("auth-token");
@@ -137,7 +137,6 @@ export default class IssueForm extends Component {
   }
 
   onAddItem(id) {
-    console.log(id);
     const drug = this.state.currentDrugList.find(
       (currentDrug) => currentDrug._id === id
     );
@@ -280,7 +279,7 @@ export default class IssueForm extends Component {
         <ConfirmationModal
           show={this.state.modalShow}
           onHide={() => this.setState({ modalShow: false })}
-          toContinue={this.toContinue}
+          tocontinue={this.tocontinue}
           title="Do you want to continue with incomplete issuing?"
           message={
             "You have not completed issuing all drugs. Patient will still be in waiting list. You can finish rest of the issueing later. Do you wish to continue?"
