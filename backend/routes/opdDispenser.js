@@ -135,7 +135,7 @@ router.route("/all_drugs").get(auth, (req, res) => {
     throw new HttpError("You are not authorized", 401);
   }
   Drug.find()
-    .sort({ name: 1 })
+    .sort({ drugName: 1 })
     .then((drugs) => res.json(drugs))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -163,13 +163,13 @@ router.route("/add").post(auth, (req, res) => {
     amount: availQuantity,
     unit: unit,
     balance: availQuantity,
-    remarks: "Added this drug to drug store",
+    remarks: "Added this drug to OPD drug store",
     dispenser: dispenser,
   });
 
   newDrug
     .save()
-    .then(() => res.json("drug added!"))
+    .then(() => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
