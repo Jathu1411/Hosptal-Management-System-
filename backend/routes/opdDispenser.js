@@ -19,11 +19,11 @@ let Drug = require("../models/opdDrug.model");
 - redirect to view all drugs page
 ****search opd drug - find drugs with matching name
 - redirect to search results page
-view drug info - get drug with id
+****view drug info - get drug with id
 - redirect to view info page
-add drug - add a drug with created action
+****add drug - add a drug with created action
 - redirect add drug page
-delete drug - delete drug with id
+****delete drug - delete drug with id
 - redirect to show all drugs or dashboard
 make a drug action - add a action to drug
 - update quantity
@@ -100,6 +100,7 @@ router.route("/issueComplete/:conId/:pid/:did").post(auth, (req, res) => {
                     actionType: "issue",
                     amount: drug.quantity,
                     balance: availQuantity,
+                    unit: drug.unit,
                     dispenser: req.params.did,
                   };
                   opdDrug.drugActions.push(newDrugAction);
@@ -238,5 +239,7 @@ router.route("/delete/:id").delete(auth, (req, res) => {
     .then((patient) => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
+
+//add a
 
 module.exports = router;

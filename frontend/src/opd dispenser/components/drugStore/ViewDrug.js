@@ -14,6 +14,7 @@ import LoadingModal from "../../../shared/components/LoadingModal";
 //import AllDrugsList from "../components/drugStore/AllDrugsList";
 import ValidationModal from "../../../shared/components/NoticeModal";
 import ConfirmationModal from "../../../shared/components/ConfirmationModal";
+import HistoryList from "./HistoryList";
 
 class ViewDrug extends Component {
   constructor(props) {
@@ -61,13 +62,17 @@ class ViewDrug extends Component {
       .then((res) => {
         this.setState({ loading: false });
         this.setState({ drug: res.data });
-        this.setState({ drugActions: res.data.drugActions });
         this.setState({
           drugName: res.data.drugName,
           drugType: res.data.drugType,
           availQuantity: res.data.availQuantity,
           unit: res.data.unit,
         });
+        const orderedDrugActions = res.data.drugActions;
+        orderedDrugActions.sort((a, b) => {
+          return new Date(b.dateTime) - new Date(a.dateTime);
+        });
+        this.setState({ drugActions: orderedDrugActions });
       })
       .catch((error) => {
         console.log(error);
@@ -188,13 +193,17 @@ class ViewDrug extends Component {
               .then((res) => {
                 this.setState({ loading: false });
                 this.setState({ drugs: res.data });
-                this.setState({ drugActions: res.data.drugActions });
                 this.setState({
                   drugName: res.data.drugName,
                   drugType: res.data.drugType,
                   availQuantity: res.data.availQuantity,
                   unit: res.data.unit,
                 });
+                const orderedDrugActions = res.data.drugActions;
+                orderedDrugActions.sort((a, b) => {
+                  return new Date(b.dateTime) - new Date(a.dateTime);
+                });
+                this.setState({ drugActions: orderedDrugActions });
                 this.setState({
                   success: "Drug updated successfully",
                 });
@@ -425,9 +434,7 @@ class ViewDrug extends Component {
           </Container>
 
           <Container>
-            <div style={{ paddingBottom: "10px" }}>
-              <h3 className="h4">Drug action history</h3>
-            </div>
+            <HistoryList actions={this.state.drugActions} />
           </Container>
         </div>
         <ValidationModal
