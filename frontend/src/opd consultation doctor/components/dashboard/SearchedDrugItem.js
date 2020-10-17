@@ -7,10 +7,23 @@ import ValidationModal from "../../../shared/components/NoticeModal";
 export default function SearchedDrugItem(props) {
   const [amount, setamount] = useState(0);
   const [modalShow, setmodalShow] = useState(false);
+  const [modalMessage, setmodalMessage] = useState("");
+  const [modalTitle, setmodalTitle] = useState("");
 
   const handleSubmit = (e) => {
     if (e.keyCode === 13) {
-      if (amount > props.drug.availQuantity) {
+      if (
+        isNaN(amount) ||
+        amount === "" ||
+        amount === null ||
+        amount === undefined
+      ) {
+        setmodalTitle("Incorrect amount!");
+        setmodalMessage("Amount is required as a number");
+        setmodalShow(true);
+      } else if (amount > props.drug.availQuantity) {
+        setmodalTitle("Amount not available in the store");
+        setmodalMessage("Prescribing amount cannot exceed available amount");
         setmodalShow(true);
       } else {
         e.preventDefault();
@@ -28,7 +41,8 @@ export default function SearchedDrugItem(props) {
       <td>
         <Form.Control
           type="number"
-          min="1"
+          min="0"
+          step="0.01"
           max={props.drug.availQuantity}
           placeholder={"quantity in " + props.drug.unit}
           name="amount"
@@ -42,8 +56,8 @@ export default function SearchedDrugItem(props) {
       <ValidationModal
         show={modalShow}
         onHide={() => setmodalShow(false)}
-        title="Amount not available in the store"
-        message="Prescribing amount cannot exceed available amount"
+        title={modalTitle}
+        message={modalMessage}
       />
     </tr>
   );

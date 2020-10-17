@@ -103,7 +103,6 @@ class OpdDrugStore extends Component {
       .catch((error) => {
         console.log(error);
       });
-    console.log(this.state.drugs);
   }
 
   //navigation functions

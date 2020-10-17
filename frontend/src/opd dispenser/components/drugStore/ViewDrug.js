@@ -11,7 +11,6 @@ import Button from "react-bootstrap/Button";
 
 import SuccessNotice from "../../../shared/components/ErrorNotice";
 import LoadingModal from "../../../shared/components/LoadingModal";
-//import AllDrugsList from "../components/drugStore/AllDrugsList";
 import ValidationModal from "../../../shared/components/NoticeModal";
 import ConfirmationModal from "../../../shared/components/ConfirmationModal";
 import HistoryList from "./HistoryList";
@@ -24,12 +23,13 @@ class ViewDrug extends Component {
       drug: {},
       drugActions: [],
       success: undefined,
+      successSecond: undefined,
       loading: false,
       drugName: "",
       drugType: "",
       availQuantity: 0.0,
       unit: "",
-      actionType: "",
+      actionType: "add",
       amount: 0.0,
       remarks: "",
       modalShow: false,
@@ -47,6 +47,7 @@ class ViewDrug extends Component {
     this.onChangeRemarks = this.onChangeRemarks.bind(this);
     this.onSubmitDelete = this.onSubmitDelete.bind(this);
     this.toDeleteDrug = this.toDeleteDrug.bind(this);
+    this.onSubmitAddDrugAction = this.onSubmitAddDrugAction.bind(this);
   }
 
   componentDidMount() {
@@ -114,7 +115,7 @@ class ViewDrug extends Component {
 
   onChangeAmount(e) {
     this.setState({
-      amount: e.target.value,
+      amount: parseFloat(e.target.value),
     });
   }
 
@@ -167,7 +168,6 @@ class ViewDrug extends Component {
           drugType: this.state.drugType,
           availQuantity: this.state.availQuantity,
           unit: this.state.unit,
-          dispenser: localStorage.getItem("id"),
         };
         this.setState({ loading: true });
         Axios.post(
@@ -239,7 +239,7 @@ class ViewDrug extends Component {
     ).then((res) => {
       this.setState({ loading: false });
       this.setState({
-        success: "Drug record deleted successfully",
+        successSecond: "Drug record deleted successfully",
       });
       setTimeout(() => {
         this.setState({
@@ -248,6 +248,89 @@ class ViewDrug extends Component {
         this.props.setComponent("dashboard");
       }, 2000);
     });
+  }
+
+  onSubmitAddDrugAction(e) {
+    e.preventDefault();
+
+    if (this.state.actionType.trim() === "") {
+      this.setState({
+        modalMessage: "Drug action type is required",
+      });
+      this.setState({ modalShow: true });
+    } else if (isNaN(this.state.amount)) {
+      this.setState({
+        modalMessage: "Amount is required as a number",
+      });
+      this.setState({ modalShow: true });
+    } else if (this.state.amount === 0.0) {
+      this.setState({
+        modalMessage: "Amount should be larger than 0",
+      });
+      this.setState({ modalShow: true });
+    } else {
+      const drugAction = {
+        actionType: this.state.actionType,
+        amount: this.state.amount,
+        remarks: this.state.remarks,
+        unit: this.state.unit,
+      };
+      this.setState({ loading: true });
+      const token = localStorage.getItem("auth-token");
+      Axios.post(
+        "http://localhost:5000/api/opd_dispenser/drug_action/add/" +
+          this.props.drug._id,
+        drugAction,
+        {
+          headers: { "x-auth-token": token },
+        }
+      )
+        .then((res) => {
+          this.setState({ loading: false });
+          if (res.data === "success") {
+            //get the drug
+            this.setState({ loading: true });
+            const token = localStorage.getItem("auth-token");
+            Axios.get(
+              "http://localhost:5000/api/opd_dispenser/drug/" +
+                this.props.drug._id,
+              {
+                headers: { "x-auth-token": token },
+              }
+            )
+              .then((res) => {
+                this.setState({ loading: false });
+                this.setState({ drugs: res.data });
+                this.setState({
+                  drugName: res.data.drugName,
+                  drugType: res.data.drugType,
+                  availQuantity: res.data.availQuantity,
+                  unit: res.data.unit,
+                });
+                const orderedDrugActions = res.data.drugActions;
+                orderedDrugActions.sort((a, b) => {
+                  return new Date(b.dateTime) - new Date(a.dateTime);
+                });
+                this.setState({ drugActions: orderedDrugActions });
+                this.setState({
+                  successSecond: "Drug action added successfully",
+                });
+                this.setState({ amount: 0.0, remarks: "" });
+                setTimeout(() => {
+                  this.setState({
+                    successSecond: undefined,
+                  });
+                }, 2000);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 
   render() {
@@ -351,7 +434,6 @@ class ViewDrug extends Component {
                 </Button>
               </div>
             </Form>
-
             <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
               <Button
                 type="submit"
@@ -367,10 +449,20 @@ class ViewDrug extends Component {
           </Container>
 
           <Container>
+            {this.state.successSecond !== "" &&
+              this.state.successSecond !== undefined && (
+                <div style={{ paddingBottom: "5px" }}>
+                  <SuccessNotice
+                    variant="success"
+                    msg={this.state.successSecond}
+                    clearError={() => this.setState({ successSecond: "" })}
+                  />
+                </div>
+              )}
             <div style={{ paddingBottom: "10px" }}>
               <h3 className="h4">Add drug action</h3>
             </div>
-            <Form onSubmit={this.onSubmitAdd}>
+            <Form onSubmit={this.onSubmitAddDrugAction}>
               <Form.Group as={Row} controlId="formHorizontal">
                 <Form.Label column sm={2}>
                   Action type
@@ -395,6 +487,7 @@ class ViewDrug extends Component {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
+                    step="0.01"
                     min="0"
                     value={this.state.amount}
                     placeholder="How much"

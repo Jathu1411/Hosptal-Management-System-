@@ -25,7 +25,7 @@ let Drug = require("../models/opdDrug.model");
 - redirect add drug page
 ****delete drug - delete drug with id
 - redirect to show all drugs or dashboard
-make a drug action - add a action to drug
+****make a drug action - add a action to drug
 - update quantity
 - redirect to view drug info page
 */
@@ -213,7 +213,7 @@ router.route("/update/:id").post(auth, (req, res) => {
   const drugType = req.body.drugType;
   const availQuantity = req.body.availQuantity;
   const unit = req.body.unit;
-  const dispenser = mongoose.Types.ObjectId(req.body.dispenser);
+  const dispenser = mongoose.Types.ObjectId(req.userData.userId);
 
   Drug.findById(req.params.id)
     .then((drug) => {
@@ -240,6 +240,46 @@ router.route("/delete/:id").delete(auth, (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-//add a
+//add a drug action
+router.route("/drug_action/add/:id").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+
+  const actionType = req.body.actionType;
+  const amount = req.body.amount;
+  const unit = req.body.unit;
+  const remarks = req.body.remarks;
+  let balance = 0.0;
+  const dispenser = mongoose.Types.ObjectId(req.userData.userId);
+
+  Drug.findById(req.params.id)
+    .then((drug) => {
+      if (actionType.trim().toLowerCase() === "add") {
+        balance = drug.availQuantity + amount;
+      }
+
+      if (actionType.trim().toLowerCase() === "remove") {
+        balance = drug.availQuantity - amount;
+      }
+
+      drug.drugActions.push({
+        actionType: actionType,
+        amount: amount,
+        unit: unit,
+        balance: balance,
+        remarks: remarks,
+        dispenser: dispenser,
+      });
+
+      drug.availQuantity = balance;
+
+      drug
+        .save()
+        .then(() => res.json("success"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 
 module.exports = router;
