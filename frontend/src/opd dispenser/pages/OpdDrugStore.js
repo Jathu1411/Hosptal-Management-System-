@@ -103,6 +103,7 @@ class OpdDrugStore extends Component {
       .catch((error) => {
         console.log(error);
       });
+    console.log(this.state.drugs);
   }
 
   //navigation functions
@@ -120,6 +121,20 @@ class OpdDrugStore extends Component {
       default:
         this.setState({ currentComponent: "dashboard" });
     }
+
+    //get all drugs
+    //this.setState({ loading: true });
+    const token = localStorage.getItem("auth-token");
+    Axios.get("http://localhost:5000/api/opd_dispenser/all_drugs", {
+      headers: { "x-auth-token": token },
+    })
+      .then((res) => {
+        this.setState({ loading: false });
+        this.setState({ drugs: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   //search functions
@@ -237,7 +252,6 @@ class OpdDrugStore extends Component {
                   this.setState({
                     success: undefined,
                   });
-                  this.setComponent("dashboard");
                 }, 2000);
               })
               .catch((error) => {
@@ -394,6 +408,7 @@ class OpdDrugStore extends Component {
               {this.state.currentComponent === "viewing" ? (
                 <ViewDrug
                   drug={this.state.currentDrug}
+                  drugs={this.state.drugs}
                   setComponent={this.setComponent}
                 />
               ) : (

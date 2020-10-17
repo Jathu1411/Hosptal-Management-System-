@@ -282,7 +282,7 @@ export default class IssueForm extends Component {
           tocontinue={this.tocontinue}
           title="Do you want to continue with incomplete issuing?"
           message={
-            "You have not completed issuing all drugs. Patient will still be in waiting list. You can finish rest of the issueing later. Do you wish to continue?"
+            "You have not completed issuing all drugs. Patient will still be in the waiting list. You can finish rest of the issueing later. Issue changes will not be updated in the OPD drug store until you completely issue all drugs. Do you wish to continue?"
           }
         />
       </div>

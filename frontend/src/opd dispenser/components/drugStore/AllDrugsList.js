@@ -33,7 +33,7 @@ export default class AllDrugsList extends Component {
         {this.props.drugs.length !== 0 ? (
           <div>
             <div style={{ paddingBottom: "10px" }}>
-              <h3 className="h4">All Drugs in the OPD</h3>
+              <h3 className="h4">All drugs in the OPD</h3>
             </div>
             <Table striped hover responsive>
               <thead>

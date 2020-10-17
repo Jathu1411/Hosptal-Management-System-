@@ -53,7 +53,7 @@ router.route("/waiting_consultations").get(auth, (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-//get a waiting patients
+//get a waiting patient
 router.route("/waiting_patients/:id").get((req, res) => {
   // if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
   //   throw new HttpError("You are not authorized", 401);
@@ -90,7 +90,27 @@ router.route("/issueComplete/:conId/:pid/:did").post(auth, (req, res) => {
         .then(() => {
           Patient.findByIdAndUpdate(req.params.pid, {
             stage: "treated",
-          }).then(() => res.json("success"));
+          }).then(() => {
+            drugArr.forEach((drug) => {
+              Drug.findById(drug.drugId)
+                .then((opdDrug) => {
+                  const availQuantity = opdDrug.availQuantity - drug.quantity;
+                  opdDrug.availQuantity = availQuantity;
+                  const newDrugAction = {
+                    actionType: "issue",
+                    amount: drug.quantity,
+                    balance: availQuantity,
+                    dispenser: req.params.did,
+                  };
+                  opdDrug.drugActions.push(newDrugAction);
+                  opdDrug
+                    .save()
+                    .catch((err) => res.status(400).json("Error: " + err));
+                })
+                .catch((err) => res.status(400).json("Error: " + err));
+            });
+            res.json("success");
+          });
         })
         .catch((err) => res.status(400).json("Error: " + err));
     })
@@ -170,6 +190,52 @@ router.route("/add").post(auth, (req, res) => {
   newDrug
     .save()
     .then(() => res.json("success"))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a drug
+router.route("/drug/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Drug.findById(req.params.id)
+    .then((drug) => res.json(drug))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//update a drug
+router.route("/update/:id").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  const drugName = req.body.drugName;
+  const drugType = req.body.drugType;
+  const availQuantity = req.body.availQuantity;
+  const unit = req.body.unit;
+  const dispenser = mongoose.Types.ObjectId(req.body.dispenser);
+
+  Drug.findById(req.params.id)
+    .then((drug) => {
+      drug.drugName = drugName;
+      drug.drugType = drugType;
+      drug.unit = unit;
+      drug.dispenser = dispenser;
+
+      drug
+        .save()
+        .then(() => res.json("success"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//delete a drug
+router.route("/delete/:id").delete(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Drug.findByIdAndDelete(req.params.id)
+    .then((patient) => res.json("success"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
