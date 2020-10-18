@@ -8,7 +8,7 @@ let OpdDrug = require("../models/opdDrug.model");
 let ClinicReference = require("../models/clinicReference.model");
 
 /*IC Operation
-dashboard - normal consultant functions 
+****dashboard - normal consultant functions 
 - redirect to dashboard
 generate monthly statistic -  get all the patients, consultations, opd drugs
 - calculate overall, patient, drug, disease summary
