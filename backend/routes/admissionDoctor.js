@@ -116,4 +116,52 @@ router.route("/add").post(auth, (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+//get all admitted consulatations - limit
+router.route("/admitted_consultations").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Consultation.find({
+    $or: [
+      { stage: "ward_admitted" },
+      { stage: "ward_discharged" },
+      { stage: "ward_transfered" },
+    ],
+  })
+    .limit(10)
+    .then((consultations) => res.json(consultations))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get all admitted consultations with patient details - no limit
+router.route("/admitted_consultations_patients").get((req, res) => {
+  // if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
+  //   throw new HttpError("You are not authorized", 401);
+  // }
+  Consultation.find({
+    $or: [
+      { stage: "ward_admitted" },
+      { stage: "ward_discharged" },
+      { stage: "ward_transfered" },
+    ],
+  })
+    .populate("patient")
+    .then((consultations) => {
+      const wardPatients = [];
+      consultations.forEach((consultation) => {
+        wardPatients.push({
+          conId: consultation._id,
+          pid: consultation.patient._id,
+          name: consultation.patient.name,
+          nic: consultation.patient.nic,
+          dob: consultation.patient.dob,
+          address: consultation.patient.address,
+          gender: consultation.patient.gender,
+        });
+      });
+      res.json(wardPatients);
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 module.exports = router;

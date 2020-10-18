@@ -174,7 +174,16 @@ class CdRecords extends Component {
 
   //crud functions
   toViewPatientDetail(id, from) {
-    const patient = this.state.patients.find((patient) => patient._id === id);
+    let patient = {};
+    if (from === "start") {
+      patient = this.state.patients.find((patient) => patient._id === id);
+    }
+
+    if (from === "search_result") {
+      patient = this.state.searchedPatients.find(
+        (patient) => patient._id === id
+      );
+    }
 
     this.setState({ currentPatient: patient }, () => {
       this.setPreviousComponent(from);
