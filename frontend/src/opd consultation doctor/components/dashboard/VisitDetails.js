@@ -58,7 +58,6 @@ export default class VisitDetails extends Component {
               )
                 .then((res) => {
                   this.setState({ reference: res.data });
-                  console.log(this.state.reference);
                   this.setState({ loading: false });
                 })
                 .catch((error) => {

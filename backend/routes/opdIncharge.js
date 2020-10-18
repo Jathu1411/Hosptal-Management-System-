@@ -1,12 +1,13 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
-const HttpError = require("../models/http-error");
 const auth = require("../middleware/auth");
+const HttpError = require("../models/http-error");
 let Patient = require("../models/patient.model");
 let Consultation = require("../models/consultation.model");
-let Admission = require("../models/admission.model");
+let OpdDrug = require("../models/opdDrug.model");
+let ClinicReference = require("../models/clinicReference.model");
 
-/*Operation
+/*IC Operation
 dashboard - normal consultant functions 
 - redirect to dashboard
 generate monthly statistic -  get all the patients, consultations, opd drugs

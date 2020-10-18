@@ -104,7 +104,7 @@ class Login extends Component {
       case "OPD Admission Doctor":
         this.props.history.push("/opd_ad_dashboard");
         break;
-      case "OPD OPD In Charge":
+      case "OPD In Charge":
         this.props.history.push("/opd_ic_dashboard");
         break;
       default:

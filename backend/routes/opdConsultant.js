@@ -33,9 +33,12 @@ let ClinicReference = require("../models/clinicReference.model");
 
 //get all patients
 router.route("/all_patients").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -48,9 +51,12 @@ router.route("/all_patients").get(auth, (req, res) => {
 
 //get all waiting patients
 router.route("/waiting_patients").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -61,9 +67,12 @@ router.route("/waiting_patients").get(auth, (req, res) => {
 
 //get all matching waiting patients by name
 router.route("/waiting_patients/name/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -79,9 +88,12 @@ router.route("/waiting_patients/name/:key").get(auth, (req, res) => {
 
 //get all matching waiting patients by nic
 router.route("/waiting_patients/nic/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -97,9 +109,12 @@ router.route("/waiting_patients/nic/:key").get(auth, (req, res) => {
 
 //get all patients
 router.route("/all_patients").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -112,9 +127,12 @@ router.route("/all_patients").get(auth, (req, res) => {
 
 //get all matching patients by name
 router.route("/all_patients/name/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -127,9 +145,12 @@ router.route("/all_patients/name/:key").get(auth, (req, res) => {
 
 //get all matching patients by nic
 router.route("/all_patients/nic/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -142,9 +163,12 @@ router.route("/all_patients/nic/:key").get(auth, (req, res) => {
 
 //get a patient
 router.route("/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -155,9 +179,12 @@ router.route("/:id").get(auth, (req, res) => {
 
 //get a patient's consultations
 router.route("/consultations/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -168,9 +195,12 @@ router.route("/consultations/:id").get(auth, (req, res) => {
 
 //add a consultation
 router.route("/add").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -211,13 +241,16 @@ router.route("/add").post(auth, (req, res) => {
 });
 
 //refer patient to ward
-router.route("/ward/:conId").post((req, res) => {
-  // if (
-  //   req.userData.unit !== "OPD" ||
-  //   req.userData.post !== "Consultion Doctor"
-  // ) {
-  //   throw new HttpError("You are not authorized", 401);
-  // }
+router.route("/ward/:conId").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  if (
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
+  ) {
+    throw new HttpError("You are not authorized", 401);
+  }
   Consultation.findByIdAndUpdate(req.params.conId, {
     stage: "ward_referenced",
   })
@@ -227,9 +260,12 @@ router.route("/ward/:conId").post((req, res) => {
 
 //get all opd drugs
 router.route("/prescribe/drugs").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -240,9 +276,12 @@ router.route("/prescribe/drugs").get(auth, (req, res) => {
 
 //get a consultation
 router.route("/consultation/:conId").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -253,9 +292,12 @@ router.route("/consultation/:conId").get(auth, (req, res) => {
 
 //get all matching opd drugs
 router.route("/prescribe/drugs/:key").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -268,9 +310,12 @@ router.route("/prescribe/drugs/:key").get(auth, (req, res) => {
 
 //add a prescription to consultation
 router.route("/prescribe/:conId").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -299,9 +344,12 @@ router.route("/prescribe/:conId").post(auth, (req, res) => {
 
 //get a clinic references
 router.route("/crefs/:conId").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -312,9 +360,12 @@ router.route("/crefs/:conId").get(auth, (req, res) => {
 
 //get all clinic references - not needed
 router.route("/all_crefs").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
@@ -325,9 +376,12 @@ router.route("/all_crefs").get(auth, (req, res) => {
 
 //add a clinic reference
 router.route("/add_cref/:conId").post(auth, (req, res) => {
+  if (req.userData.unit !== "OPD") {
+    throw new HttpError("You are not authorized", 401);
+  }
   if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
+    req.userData.post !== "Consultion Doctor" &&
+    req.userData.post !== "In Charge"
   ) {
     throw new HttpError("You are not authorized", 401);
   }
