@@ -29,16 +29,16 @@ const usersRouter = require("./routes/users");
 const opdTicketClerkRouter = require("./routes/opdTicketClerk");
 const opdConsultantRouter = require("./routes/opdConsultant");
 const opdDispenserRouter = require("./routes/opdDispenser");
-// const admissionDoctorRouter = require("./routes/admissionDoctor");
-// const opdInchargeRouter = require("./routes/opdIncharge");
+const admissionDoctorRouter = require("./routes/admissionDoctor");
+const opdInchargeRouter = require("./routes/opdIncharge");
 
 //assign routes to use
 app.use("/api/users", usersRouter);
 app.use("/api/opd_tc", opdTicketClerkRouter);
 app.use("/api/opd_consultant", opdConsultantRouter);
 app.use("/api/opd_dispenser", opdDispenserRouter);
-// app.use("/admission", admissionDoctorRouter);
-// app.use("/opd_incharge", opdInchargeRouter);
+app.use("/api/admission", admissionDoctorRouter);
+app.use("/api/opd_incharge", opdInchargeRouter);
 
 //error handling
 app.use((error, req, res, next) => {
