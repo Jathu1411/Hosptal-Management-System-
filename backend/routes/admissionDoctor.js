@@ -12,15 +12,11 @@ let User = require("../models/user.model");
 - redirect to dashboard page
 ****search waiting patients - get all patients with ward_referenced stage
 - redirect to waiting patients search results page
-view all admitted patients - get all patients with ward_admitted stage
+****view all admitted patients - get all patients with ward_admitted stage
 - redirect to view all admitted patients page
-search all ward admitted patients - get all patients with ward_admitted stage
+****search all ward admitted patients - get all patients with ward_admitted stage
 - redirect to ward admitted patients search results page
-view all ward patients - get all the patients with ward stage
-- redirect to view all ward patients page
-search all ward patients - get all patients with ward stage
-- redirect to ward patients search results page
-view patient admission info - get patient, consultation, admission of id
+****view patient admission info - get patient, consultation, admission of id
 - redirect to view patient admission info page
 ****admit a patient - create a admission
 - change stage to ward_admitted
@@ -134,10 +130,10 @@ router.route("/admitted_consultations").get(auth, (req, res) => {
 });
 
 //get all admitted consultations with patient details - no limit
-router.route("/admitted_consultations_patients").get((req, res) => {
-  // if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
-  //   throw new HttpError("You are not authorized", 401);
-  // }
+router.route("/admitted_consultations_patients").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
+    throw new HttpError("You are not authorized", 401);
+  }
   Consultation.find({
     $or: [
       { stage: "ward_admitted" },
@@ -161,6 +157,36 @@ router.route("/admitted_consultations_patients").get((req, res) => {
       });
       res.json(wardPatients);
     })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a patient information
+router.route("/patients/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Patient.findById(req.params.id)
+    .then((patient) => res.json(patient))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a consultation
+router.route("/consultation/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Consultation.findById(req.params.id)
+    .then((consultation) => res.json(consultation))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//get a admission
+router.route("/admission/:id").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "Admission Doctor") {
+    throw new HttpError("You are not authorized", 401);
+  }
+  Admission.findOne({ consultation: req.params.id })
+    .then((admission) => res.json(admission))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 

@@ -15,8 +15,8 @@ export default class AllSearchPatientList extends Component {
     this.setState({ patients: this.props.patients });
   }
 
-  toViewPatientDetail(id) {
-    this.props.toViewPatientDetail(id);
+  toViewPatientDetail(pid, cid) {
+    this.props.toViewPatientDetail(pid, cid);
   }
 
   getPatientList() {
