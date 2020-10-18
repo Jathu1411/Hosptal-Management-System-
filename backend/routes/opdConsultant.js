@@ -211,13 +211,13 @@ router.route("/add").post(auth, (req, res) => {
 });
 
 //refer patient to ward
-router.route("/ward/:conId").post(auth, (req, res) => {
-  if (
-    req.userData.unit !== "OPD" ||
-    req.userData.post !== "Consultion Doctor"
-  ) {
-    throw new HttpError("You are not authorized", 401);
-  }
+router.route("/ward/:conId").post((req, res) => {
+  // if (
+  //   req.userData.unit !== "OPD" ||
+  //   req.userData.post !== "Consultion Doctor"
+  // ) {
+  //   throw new HttpError("You are not authorized", 401);
+  // }
   Consultation.findByIdAndUpdate(req.params.conId, {
     stage: "ward_referenced",
   })

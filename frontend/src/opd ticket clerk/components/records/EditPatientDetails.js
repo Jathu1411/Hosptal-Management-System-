@@ -225,7 +225,7 @@ export default class RegisterForm extends Component {
           <Form onSubmit={this.onSubmit}>
             <Form.Group as={Row} controlId="formHorizontal">
               <Form.Label column sm={2}>
-                Name
+                Name*
               </Form.Label>
               <Col sm={10}>
                 <Form.Control
@@ -238,7 +238,7 @@ export default class RegisterForm extends Component {
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontal">
               <Form.Label column sm={2}>
-                NIC number
+                NIC number*
               </Form.Label>
               <Col sm={10}>
                 <Form.Control
@@ -252,7 +252,7 @@ export default class RegisterForm extends Component {
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontal">
               <Form.Label column sm={2}>
-                Date of birth
+                Date of birth*
               </Form.Label>
               <Col sm={10}>
                 <input
@@ -267,7 +267,7 @@ export default class RegisterForm extends Component {
             <fieldset>
               <Form.Group as={Row} controlId="formHorizontal">
                 <Form.Label column sm={2}>
-                  Gender
+                  Gender*
                 </Form.Label>
                 <Col sm={10}>
                   <div key="inline-radio" className="mt-1">
@@ -299,7 +299,7 @@ export default class RegisterForm extends Component {
             </fieldset>
             <Form.Group as={Row} controlId="formHorizontal">
               <Form.Label column sm={2}>
-                Address
+                Address*
               </Form.Label>
               <Col sm={10}>
                 <Form.Control
@@ -312,7 +312,7 @@ export default class RegisterForm extends Component {
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontal">
               <Form.Label column sm={2}>
-                Phone
+                Phone*
               </Form.Label>
               <Col sm={10}>
                 <Form.Control

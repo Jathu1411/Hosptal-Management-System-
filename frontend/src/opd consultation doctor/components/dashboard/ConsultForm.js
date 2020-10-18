@@ -249,8 +249,10 @@ export default class ConsultForm extends Component {
       Axios.post("http://localhost:5000/api/opd_consultant/add", consultation, {
         headers: { "x-auth-token": token },
       }).then((res) => {
+        const token = localStorage.getItem("auth-token");
         Axios.post(
           "http://localhost:5000/api/opd_consultant/ward/" + res.data,
+          {},
           {
             headers: { "x-auth-token": token },
           }
@@ -401,7 +403,7 @@ export default class ConsultForm extends Component {
               <Form onSubmit={(e) => e.preventDefault()}>
                 <Form.Group as={Row} controlId="formHorizontal">
                   <Form.Label column sm={2}>
-                    Disease
+                    Disease*
                   </Form.Label>
                   <Col sm={10}>
                     <Form.Control
@@ -416,7 +418,7 @@ export default class ConsultForm extends Component {
                 <fieldset>
                   <Form.Group as={Row} controlId="formHorizontal">
                     <Form.Label column sm={2}>
-                      Disease state
+                      Disease state*
                     </Form.Label>
                     <Col sm={10}>
                       <div key="inline-radio" className="mt-1">

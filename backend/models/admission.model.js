@@ -31,6 +31,7 @@ const admissionSchema = new Schema(
     initialDietPlan: String,
     notes: String,
     consultation: { type: Schema.Types.ObjectId, ref: "Consultation" },
+    admittedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

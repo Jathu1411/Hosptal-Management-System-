@@ -215,9 +215,13 @@ class TcRecords extends Component {
     let success = undefined;
     this.setState({ loading: true });
     const token = localStorage.getItem("auth-token");
-    Axios.post("http://localhost:5000/api/opd_tc//consult/" + id, {
-      headers: { "x-auth-token": token },
-    })
+    Axios.post(
+      "http://localhost:5000/api/opd_tc/consult/" + id,
+      {},
+      {
+        headers: { "x-auth-token": token },
+      }
+    )
       .then((res) => {
         success = res.data;
         Axios.get("http://localhost:5000/api/opd_tc/all_patients", {

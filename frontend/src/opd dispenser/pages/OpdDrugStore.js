@@ -303,7 +303,7 @@ class OpdDrugStore extends Component {
                   <Form onSubmit={this.onSubmitAdd}>
                     <Form.Group as={Row} controlId="formHorizontal">
                       <Form.Label column sm={2}>
-                        Drug name
+                        Drug name*
                       </Form.Label>
                       <Col sm={10}>
                         <Form.Control
@@ -317,7 +317,7 @@ class OpdDrugStore extends Component {
 
                     <Form.Group as={Row} controlId="formHorizontal2">
                       <Form.Label column sm={2}>
-                        Drug type
+                        Drug type*
                       </Form.Label>
                       <Col sm={10}>
                         <Form.Control
@@ -331,7 +331,7 @@ class OpdDrugStore extends Component {
 
                     <Form.Group as={Row} controlId="formHorizontal3">
                       <Form.Label column sm={2}>
-                        Available quantity
+                        Available quantity*
                       </Form.Label>
                       <Col sm={10}>
                         <Form.Control
@@ -346,7 +346,7 @@ class OpdDrugStore extends Component {
 
                     <Form.Group as={Row} controlId="formHorizontal4">
                       <Form.Label column sm={2}>
-                        Unit
+                        Unit*
                       </Form.Label>
                       <Col sm={10}>
                         <Form.Control
