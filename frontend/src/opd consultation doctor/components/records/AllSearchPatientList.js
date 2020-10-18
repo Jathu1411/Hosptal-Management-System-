@@ -18,8 +18,8 @@ export default class AllSearchPatientList extends Component {
     this.props.setComponent(changeTo);
   }
 
-  toViewPatientDetail(id) {
-    this.props.toViewPatientDetail(id);
+  toViewPatientDetail(id, from) {
+    this.props.toViewPatientDetail(id, from);
   }
   getPatientList() {
     return this.props.patients.map((patient) => {
@@ -28,7 +28,7 @@ export default class AllSearchPatientList extends Component {
           key={patient._id}
           patient={patient}
           link={this.toViewPatientDetail}
-          from={"search_result"}
+          from="search_result"
         />
       );
     });

@@ -34,8 +34,8 @@ export default class AllPatientList extends Component {
     this.props.setComponent(changeTo);
   }
 
-  toViewPatientDetail(id) {
-    this.props.toViewPatientDetail(id);
+  toViewPatientDetail(id, from) {
+    this.props.toViewPatientDetail(id, from);
   }
 
   getPatientList() {
@@ -44,6 +44,7 @@ export default class AllPatientList extends Component {
         <ListItem
           key={patient._id}
           patient={patient}
+          from="start"
           link={this.toViewPatientDetail}
         />
       );
