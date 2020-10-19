@@ -245,6 +245,12 @@ class OpdDrugStore extends Component {
                 this.setState({ loading: false });
                 this.setState({ drugs: res.data });
                 this.setState({
+                  drugName: "",
+                  drugType: "",
+                  availQuantity: 0.0,
+                  unit: "",
+                });
+                this.setState({
                   success: "Drug added successfully",
                 });
                 setTimeout(() => {

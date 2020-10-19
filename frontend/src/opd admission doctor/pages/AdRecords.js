@@ -142,9 +142,9 @@ class AdRecords extends Component {
   onSearchAllPatientsName(e) {
     if (e.target.value.trim() !== "") {
       const searchedPatients = [];
-      const exp = new RegExp(e.target.value.trim());
+      const exp = new RegExp(e.target.value.trim().toLowerCase());
       this.state.allWardPatients.forEach((patient) => {
-        if (exp.test(patient.name)) {
+        if (exp.test(patient.name.toLowerCase())) {
           searchedPatients.push(patient);
         }
       });
@@ -159,9 +159,9 @@ class AdRecords extends Component {
   onSearchAllPatientsNic(e) {
     if (e.target.value.trim() !== "") {
       const searchedPatients = [];
-      const exp = new RegExp(e.target.value.trim());
+      const exp = new RegExp(e.target.value.trim().toLowerCase());
       this.state.allWardPatients.forEach((patient) => {
-        if (exp.test(patient.nic)) {
+        if (exp.test(patient.nic.toLowerCase())) {
           searchedPatients.push(patient);
         }
       });

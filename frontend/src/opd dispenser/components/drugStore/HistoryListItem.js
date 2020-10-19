@@ -3,6 +3,7 @@ import React from "react";
 import Moment from "moment";
 
 export default function HistoryListItem(props) {
+  Moment().utcOffset("+05:30");
   return (
     <tr onClick={(e) => e.preventDefault()}>
       <td>{Moment(props.action.dateTime).format("DD/MM/YYYY HH:mm")}</td>

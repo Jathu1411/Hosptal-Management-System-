@@ -4,7 +4,9 @@ const Schema = mongoose.Schema;
 
 const consultationSchema = new Schema(
   {
-    date: { type: Date, default: Date.now },
+    date: { type: Number, default: 1 },
+    month: { type: Number, default: 1 },
+    year: { type: Number, default: 2020 },
     visTime: { type: Number, default: 1 },
     diseaseState: { type: String, trim: true },
     disease: { type: String, trim: true },

@@ -47,7 +47,6 @@ router.route("/waiting_consultations").get(auth, (req, res) => {
   if (req.userData.unit !== "OPD" || req.userData.post !== "Dispenser") {
     throw new HttpError("You are not authorized", 401);
   }
-  //console.log(hi);
   Consultation.find({ stage: "opd_prescribed" })
     .then((consultations) => res.json(consultations))
     .catch((err) => res.status(400).json("Error: " + err));
@@ -96,12 +95,18 @@ router.route("/issueComplete/:conId/:pid/:did").post(auth, (req, res) => {
                 .then((opdDrug) => {
                   const availQuantity = opdDrug.availQuantity - drug.quantity;
                   opdDrug.availQuantity = availQuantity;
+                  const date = new Date().getDate();
+                  const month = parseInt(new Date().getUTCMonth()) + 1;
+                  const year = new Date().getUTCFullYear();
                   const newDrugAction = {
                     actionType: "issue",
                     amount: drug.quantity,
                     balance: availQuantity,
                     unit: drug.unit,
                     dispenser: req.params.did,
+                    date: date,
+                    month: month,
+                    year: year,
                   };
                   opdDrug.drugActions.push(newDrugAction);
                   opdDrug
@@ -179,6 +184,10 @@ router.route("/add").post(auth, (req, res) => {
     unit,
   });
 
+  const date = new Date().getDate();
+  const month = parseInt(new Date().getUTCMonth()) + 1;
+  const year = new Date().getUTCFullYear();
+
   newDrug.drugActions.push({
     actionType: "add",
     amount: availQuantity,
@@ -186,6 +195,9 @@ router.route("/add").post(auth, (req, res) => {
     balance: availQuantity,
     remarks: "Added this drug to OPD drug store",
     dispenser: dispenser,
+    date: date,
+    month: month,
+    year: year,
   });
 
   newDrug
@@ -263,6 +275,10 @@ router.route("/drug_action/add/:id").post(auth, (req, res) => {
         balance = drug.availQuantity - amount;
       }
 
+      const date = new Date().getDate();
+      const month = parseInt(new Date().getUTCMonth()) + 1;
+      const year = new Date().getUTCFullYear();
+
       drug.drugActions.push({
         actionType: actionType,
         amount: amount,
@@ -270,6 +286,9 @@ router.route("/drug_action/add/:id").post(auth, (req, res) => {
         balance: balance,
         remarks: remarks,
         dispenser: dispenser,
+        date: date,
+        month: month,
+        year: year,
       });
 
       drug.availQuantity = balance;

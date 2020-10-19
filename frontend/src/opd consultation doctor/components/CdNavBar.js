@@ -31,7 +31,7 @@ export default function CdNavBar() {
     history.push("/");
   };
 
-  //add my account linke
+  //add my account links
 
   return (
     <div>

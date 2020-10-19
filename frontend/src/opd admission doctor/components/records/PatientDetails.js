@@ -13,6 +13,8 @@ export default class PatientDetails extends Component {
   constructor(props) {
     super(props);
 
+    Moment().utcOffset("+05:30");
+
     this.state = {
       patient: {},
       consultation: {},

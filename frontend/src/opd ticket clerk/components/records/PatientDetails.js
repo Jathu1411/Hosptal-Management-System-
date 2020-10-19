@@ -15,6 +15,8 @@ export default class PatientDetails extends Component {
   constructor(props) {
     super(props);
 
+    Moment().utcOffset("+05:30");
+
     this.state = {
       patient: {},
       consultations: [],
@@ -72,7 +74,7 @@ export default class PatientDetails extends Component {
               <b>Visit {i + 1}</b>
             </Col>
             <Col sm={10}>
-              {Moment(consultation.date).format("DD/MM/YYYY HH:mm")}{" "}
+              {Moment(consultation.createdAt).format("DD/MM/YYYY HH:mm")}{" "}
             </Col>
           </Row>
         );

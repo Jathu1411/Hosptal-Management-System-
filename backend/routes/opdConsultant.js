@@ -204,6 +204,11 @@ router.route("/add").post(auth, (req, res) => {
   ) {
     throw new HttpError("You are not authorized", 401);
   }
+
+  const date = new Date().getDate();
+  const month = parseInt(new Date().getUTCMonth()) + 1;
+  const year = new Date().getUTCFullYear();
+
   const visTime = req.body.visTime;
   const diseaseState = req.body.diseaseState;
   const disease = req.body.disease;
@@ -212,6 +217,9 @@ router.route("/add").post(auth, (req, res) => {
   const consultant = mongoose.Types.ObjectId(req.body.consultant); //might use mongoose.Types.ObjectId('')
 
   const newConsultation = new Consultation({
+    date,
+    month,
+    year,
     visTime,
     diseaseState,
     disease,

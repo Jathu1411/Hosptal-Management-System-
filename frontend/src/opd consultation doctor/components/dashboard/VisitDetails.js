@@ -93,7 +93,7 @@ export default class VisitDetails extends Component {
             <MediaQuery minDeviceWidth={1200}>
               <h1 className="h3">
                 Visit: {this.state.consultation.visTime}{" "}
-                {Moment(this.state.consultation.date).format(
+                {Moment(this.state.consultation.createdAt).format(
                   "DD/MM/YYYY HH:mm"
                 )}
               </h1>
@@ -102,7 +102,7 @@ export default class VisitDetails extends Component {
               <h1 className="h3">
                 Visit: <br />
                 {this.state.consultation.visTime}{" "}
-                {Moment(this.state.consultation.date).format(
+                {Moment(this.state.consultation.createdAt).format(
                   "DD/MM/YYYY HH:mm"
                 )}
               </h1>

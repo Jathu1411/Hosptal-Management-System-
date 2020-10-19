@@ -130,9 +130,9 @@ class AdDashboard extends Component {
   onSearchWaitingPatientsName(e) {
     if (e.target.value.trim() !== "") {
       const searchedPatients = [];
-      const exp = new RegExp(e.target.value.trim());
+      const exp = new RegExp(e.target.value.trim().toLowerCase());
       this.state.patients.forEach((patient) => {
-        if (exp.test(patient.name)) {
+        if (exp.test(patient.name.toLowerCase())) {
           searchedPatients.push(patient);
         }
       });
@@ -147,9 +147,9 @@ class AdDashboard extends Component {
   onSearchWaitingPatientsNic(e) {
     if (e.target.value.trim() !== "") {
       const searchedPatients = [];
-      const exp = new RegExp(e.target.value.trim());
+      const exp = new RegExp(e.target.value.trim().toLowerCase());
       this.state.patients.forEach((patient) => {
-        if (exp.test(patient.nic)) {
+        if (exp.test(patient.nic.toLowerCase())) {
           searchedPatients.push(patient);
         }
       });

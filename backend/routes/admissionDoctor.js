@@ -75,7 +75,6 @@ router.route("/add").post(auth, (req, res) => {
   const modeOfOnset = req.body.modeOfOnset;
   const initialDietPlan = req.body.initialDietPlan;
   const notes = req.body.notes;
-  console.log(req.body.consultation);
   const consultation = mongoose.Types.ObjectId(req.body.consultation);
   const admittedBy = mongoose.Types.ObjectId(req.body.admittedBy);
 
