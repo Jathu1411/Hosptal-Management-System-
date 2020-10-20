@@ -35,6 +35,7 @@ class IcReports extends Component {
       diseaseSummary: {},
       currentComponent: "start",
       loading: false,
+      printing: false,
     };
 
     this.setComponent = this.setComponent.bind(this);
@@ -196,7 +197,6 @@ class IcReports extends Component {
     )
       .then((res) => {
         this.setState({ patientSummary: res.data });
-        console.log(res.data);
         const token = localStorage.getItem("auth-token");
         Axios.get(
           "http://localhost:5000/api/opd_incharge/drug_summary/" +
@@ -209,7 +209,6 @@ class IcReports extends Component {
         )
           .then((res) => {
             this.setState({ drugSummary: res.data });
-            console.log(res.data);
             const token = localStorage.getItem("auth-token");
             Axios.get(
               "http://localhost:5000/api/opd_incharge/disease_summary/" +
@@ -222,7 +221,6 @@ class IcReports extends Component {
             )
               .then((res) => {
                 this.setState({ diseaseSummary: res.data });
-                console.log(res.data);
                 this.setState({ loading: false });
                 this.setComponent("report");
               })
@@ -239,7 +237,17 @@ class IcReports extends Component {
       });
   }
 
-  onClickExport() {}
+  onClickExport(e) {
+    e.preventDefault();
+    this.setState({ printing: true }, () => {
+      setTimeout(() => {
+        this.setState({
+          printing: false,
+        });
+      }, 1000);
+      window.print();
+    });
+  }
 
   render() {
     return (
@@ -257,45 +265,53 @@ class IcReports extends Component {
         <div style={{ minHeight: "calc(100vh - 70px)" }}>
           <IcNavbar />
           <div style={{ paddingTop: "60px" }}>
-            <div>
-              <Container className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2">OPD Patient monthly reports</h1>
-              </Container>
-              <Container>
-                <Form onSubmit={this.onSubmitViewReport}>
-                  <Form.Row>
-                    <Form.Group as={Col} controlId="formVertical">
-                      <Form.Label>Month*</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={this.state.month}
-                        placeholder="Month"
-                        onChange={this.onChangeMonth}
-                      >
-                        {this.getMonths()}
-                      </Form.Control>
-                    </Form.Group>
-                    <Form.Group as={Col} controlId="formVertical">
-                      <Form.Label>Year*</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={this.state.year}
-                        placeholder="Year"
-                        onChange={this.onChangeYear}
-                      >
-                        {this.getYears()}
-                      </Form.Control>
-                    </Form.Group>
-                  </Form.Row>
-                  <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                    <Button type="submit" size="lg" block>
-                      Generate report
-                    </Button>
-                  </div>
-                </Form>
-                <hr />
-              </Container>
-            </div>
+            {this.state.printing ? (
+              <div style={{ paddingBottom: "10px", textAlign: "center" }}>
+                <h1 className="h2">
+                  Siddha Ayurvedic base hospital - Puthukudiyiruppu, Batticaloa
+                </h1>
+              </div>
+            ) : (
+              <div>
+                <Container className="d-flex justify-content-between felx-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                  <h1 className="h2">OPD Patient monthly reports</h1>
+                </Container>
+                <Container>
+                  <Form onSubmit={this.onSubmitViewReport}>
+                    <Form.Row>
+                      <Form.Group as={Col} controlId="formVertical">
+                        <Form.Label>Month*</Form.Label>
+                        <Form.Control
+                          as="select"
+                          value={this.state.month}
+                          placeholder="Month"
+                          onChange={this.onChangeMonth}
+                        >
+                          {this.getMonths()}
+                        </Form.Control>
+                      </Form.Group>
+                      <Form.Group as={Col} controlId="formVertical">
+                        <Form.Label>Year*</Form.Label>
+                        <Form.Control
+                          as="select"
+                          value={this.state.year}
+                          placeholder="Year"
+                          onChange={this.onChangeYear}
+                        >
+                          {this.getYears()}
+                        </Form.Control>
+                      </Form.Group>
+                    </Form.Row>
+                    <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                      <Button type="submit" size="lg" block>
+                        Generate report
+                      </Button>
+                    </div>
+                  </Form>
+                  <hr />
+                </Container>
+              </div>
+            )}
             <Container>
               {this.state.currentComponent === "report" ? (
                 <div>
@@ -377,11 +393,15 @@ class IcReports extends Component {
                     <DiseaseSummaryTable
                       summaries={this.state.diseaseSummary}
                     />
-                    <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                      <Button size="lg" block onClick={this.onClickExport}>
-                        Export report as PDF
-                      </Button>
-                    </div>
+                    {this.state.printing ? (
+                      <div></div>
+                    ) : (
+                      <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                        <Button size="lg" block onClick={this.onClickExport}>
+                          Export report as PDF
+                        </Button>
+                      </div>
+                    )}
                   </Container>
                 </div>
               ) : (
@@ -390,7 +410,20 @@ class IcReports extends Component {
             </Container>
           </div>
         </div>
-        <Footer />
+        {this.state.printing ? (
+          <div>
+            <Container>
+              <hr />
+              <div style={{ paddingBottom: "10px" }}>
+                <p className="h6">
+                  This is a computer generated document no signature required
+                </p>{" "}
+              </div>
+            </Container>
+          </div>
+        ) : (
+          <Footer />
+        )}
       </div>
     );
   }
