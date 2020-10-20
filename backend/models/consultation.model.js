@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const consultationSchema = new Schema(
   {
+    ageAtTheTime: { type: Number, default: 1 },
     date: { type: Number, default: 1 },
     month: { type: Number, default: 1 },
     year: { type: Number, default: 2020 },

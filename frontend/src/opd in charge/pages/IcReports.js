@@ -4,6 +4,7 @@ import Axios from "axios";
 
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
@@ -12,6 +13,9 @@ import Footer from "../../shared/components/Footer";
 import LoadingModal from "../../shared/components/LoadingModal";
 
 import Moment from "moment";
+import PatientSummaryTable from "../components/reports/PatientSummaryTable";
+import DrugSummaryTable from "../components/reports/DrugSummaryTable";
+import DiseaseSummaryTable from "../components/reports/DiseaseSummaryTable";
 
 class IcReports extends Component {
   constructor(props) {
@@ -39,6 +43,8 @@ class IcReports extends Component {
     this.onSubmitViewReport = this.onSubmitViewReport.bind(this);
     this.getMonths = this.getMonths.bind(this);
     this.getYears = this.getYears.bind(this);
+    this.calcTotalDrugs = this.calcTotalDrugs.bind(this);
+    this.onClickExport = this.onClickExport.bind(this);
 
     // get min date
     const token = localStorage.getItem("auth-token");
@@ -55,6 +61,8 @@ class IcReports extends Component {
           maxMonth: maxMonth,
           minYear: minYear,
           maxYear: maxYear,
+          month: minMonth,
+          year: minYear,
         });
       })
       .catch((error) => {
@@ -163,23 +171,75 @@ class IcReports extends Component {
     });
   }
 
+  calcTotalDrugs() {
+    let total = 0;
+    this.state.drugSummary.forEach((drug) => {
+      total += drug.quantity;
+    });
+    return total;
+  }
+
   //crud functions
   onSubmitViewReport(e) {
     e.preventDefault();
     // get min date
     this.setState({ loading: true });
     const token = localStorage.getItem("auth-token");
-    Axios.get("http://localhost:5000/api/opd_incharge/min_date", {
-      headers: { "x-auth-token": token },
-    })
+    Axios.get(
+      "http://localhost:5000/api/opd_incharge/patient_summary/" +
+        this.state.month +
+        "/" +
+        this.state.year,
+      {
+        headers: { "x-auth-token": token },
+      }
+    )
       .then((res) => {
-        this.setState({ loading: false });
+        this.setState({ patientSummary: res.data });
+        console.log(res.data);
+        const token = localStorage.getItem("auth-token");
+        Axios.get(
+          "http://localhost:5000/api/opd_incharge/drug_summary/" +
+            this.state.month +
+            "/" +
+            this.state.year,
+          {
+            headers: { "x-auth-token": token },
+          }
+        )
+          .then((res) => {
+            this.setState({ drugSummary: res.data });
+            console.log(res.data);
+            const token = localStorage.getItem("auth-token");
+            Axios.get(
+              "http://localhost:5000/api/opd_incharge/disease_summary/" +
+                this.state.month +
+                "/" +
+                this.state.year,
+              {
+                headers: { "x-auth-token": token },
+              }
+            )
+              .then((res) => {
+                this.setState({ diseaseSummary: res.data });
+                console.log(res.data);
+                this.setState({ loading: false });
+                this.setComponent("report");
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
       });
-    this.setComponent("report");
   }
+
+  onClickExport() {}
 
   render() {
     return (
@@ -238,7 +298,92 @@ class IcReports extends Component {
             </div>
             <Container>
               {this.state.currentComponent === "report" ? (
-                <div></div>
+                <div>
+                  <Container>
+                    <div style={{ paddingBottom: "3px" }}>
+                      <h3 className="h3">
+                        OPD monthly statistic report - {this.state.month}/
+                        {this.state.year}{" "}
+                      </h3>
+                    </div>
+                    <hr />
+                    <div style={{ paddingBottom: "10px" }}>
+                      <h3 className="h4">Overall summary</h3>
+                    </div>
+                    <div style={{ fontSize: "1.1rem" }}>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total number of patients</Col>
+                        <Col sm={8}>
+                          {this.state.patientSummary.totalPatients}
+                        </Col>
+                      </Row>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total quantity of drugs issued</Col>
+                        <Col sm={8}>{this.calcTotalDrugs()}</Col>
+                      </Row>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total number of diseases</Col>
+                        <Col sm={8}>{this.state.diseaseSummary.length}</Col>
+                      </Row>
+                    </div>
+                    <hr />
+                    <div style={{ paddingBottom: "10px" }}>
+                      <h3 className="h4">Patient summary</h3>{" "}
+                    </div>
+                    <div style={{ fontSize: "1.1rem", paddingBottom: "20px" }}>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total number of patients</Col>
+                        <Col sm={8}>
+                          {this.state.patientSummary.totalPatients}
+                        </Col>
+                      </Row>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total number of Female patients</Col>
+                        <Col sm={8}>{this.state.patientSummary.numFemales}</Col>
+                      </Row>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total number of male patients</Col>
+                        <Col sm={8}>{this.state.patientSummary.numMales}</Col>
+                      </Row>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Number of first visit patients</Col>
+                        <Col sm={8}>
+                          {this.state.patientSummary.numFirstVisit}
+                        </Col>
+                      </Row>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Number of second visit patients</Col>
+                        <Col sm={8}>
+                          {this.state.patientSummary.numSecondVisit}
+                        </Col>
+                      </Row>
+                    </div>
+                    <PatientSummaryTable
+                      summaries={this.state.patientSummary.dateSummary}
+                    />
+                    <div style={{ paddingBottom: "10px" }}>
+                      <h3 className="h4">Drug summary</h3>{" "}
+                    </div>
+                    <div style={{ fontSize: "1.1rem", paddingBottom: "20px" }}>
+                      <Row style={{ paddingTop: "2px", paddingBottom: "2px" }}>
+                        <Col sm={4}>Total quantity of drugs issued</Col>
+                        <Col sm={8}>{this.calcTotalDrugs()}</Col>
+                      </Row>
+                    </div>
+                    <DrugSummaryTable summaries={this.state.drugSummary} />
+                    <div style={{ paddingBottom: "10px" }}>
+                      <h3 className="h4">Disease summary</h3>{" "}
+                    </div>
+                    <DiseaseSummaryTable
+                      summaries={this.state.diseaseSummary}
+                    />
+                    <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                      <Button size="lg" block onClick={this.onClickExport}>
+                        Export report as PDF
+                      </Button>
+                    </div>
+                  </Container>
+                </div>
               ) : (
                 <div></div>
               )}

@@ -135,7 +135,9 @@ export default class ConsultForm extends Component {
       } else {
         visitNumber = this.state.consultations.length + 1;
       }
+      const age = Moment().diff(this.state.patient.dob, "years");
       const consultation = {
+        age: age,
         visTime: visitNumber,
         diseaseState: this.state.diseaseState,
         disease: this.state.disease,
@@ -185,7 +187,9 @@ export default class ConsultForm extends Component {
       } else {
         visitNumber = this.state.consultations.length + 1;
       }
+      const age = Moment().diff(this.state.patient.dob, "years");
       const consultation = {
+        age: age,
         visTime: visitNumber,
         diseaseState: this.state.diseaseState,
         disease: this.state.disease,
@@ -235,7 +239,9 @@ export default class ConsultForm extends Component {
       } else {
         visitNumber = this.state.consultations.length + 1;
       }
+      const age = Moment().diff(this.state.patient.dob, "years");
       const consultation = {
+        age: age,
         visTime: visitNumber,
         diseaseState: this.state.diseaseState,
         disease: this.state.disease,

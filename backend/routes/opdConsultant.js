@@ -209,6 +209,7 @@ router.route("/add").post(auth, (req, res) => {
   const month = parseInt(new Date().getUTCMonth()) + 1;
   const year = new Date().getUTCFullYear();
 
+  const ageAtTheTime = req.body.age;
   const visTime = req.body.visTime;
   const diseaseState = req.body.diseaseState;
   const disease = req.body.disease;
@@ -217,6 +218,7 @@ router.route("/add").post(auth, (req, res) => {
   const consultant = mongoose.Types.ObjectId(req.body.consultant); //might use mongoose.Types.ObjectId('')
 
   const newConsultation = new Consultation({
+    ageAtTheTime,
     date,
     month,
     year,
