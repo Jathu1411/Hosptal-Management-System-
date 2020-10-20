@@ -277,7 +277,7 @@ export default class PatientDetails extends Component {
               </Row>
               <Row style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                 <Col sm={2}>
-                  <b>Disease/illness</b>
+                  <b>Disease or illness</b>
                 </Col>
                 <Col sm={10}>{this.state.consultation.disease}</Col>
               </Row>

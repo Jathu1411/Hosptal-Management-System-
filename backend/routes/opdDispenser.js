@@ -91,29 +91,31 @@ router.route("/issueComplete/:conId/:pid/:did").post(auth, (req, res) => {
             stage: "treated",
           }).then(() => {
             drugArr.forEach((drug) => {
-              Drug.findById(drug.drugId)
-                .then((opdDrug) => {
-                  const availQuantity = opdDrug.availQuantity - drug.quantity;
-                  opdDrug.availQuantity = availQuantity;
-                  const date = new Date().getDate();
-                  const month = parseInt(new Date().getUTCMonth()) + 1;
-                  const year = new Date().getUTCFullYear();
-                  const newDrugAction = {
-                    actionType: "issue",
-                    amount: drug.quantity,
-                    balance: availQuantity,
-                    unit: drug.unit,
-                    dispenser: req.params.did,
-                    date: date,
-                    month: month,
-                    year: year,
-                  };
-                  opdDrug.drugActions.push(newDrugAction);
-                  opdDrug
-                    .save()
-                    .catch((err) => res.status(400).json("Error: " + err));
-                })
-                .catch((err) => res.status(400).json("Error: " + err));
+              if (drug.state === "issued") {
+                Drug.findById(drug.drugId)
+                  .then((opdDrug) => {
+                    const availQuantity = opdDrug.availQuantity - drug.quantity;
+                    opdDrug.availQuantity = availQuantity;
+                    const date = new Date().getDate();
+                    const month = parseInt(new Date().getUTCMonth()) + 1;
+                    const year = new Date().getUTCFullYear();
+                    const newDrugAction = {
+                      actionType: "issue",
+                      amount: drug.quantity,
+                      balance: availQuantity,
+                      unit: drug.unit,
+                      dispenser: req.params.did,
+                      date: date,
+                      month: month,
+                      year: year,
+                    };
+                    opdDrug.drugActions.push(newDrugAction);
+                    opdDrug
+                      .save()
+                      .catch((err) => res.status(400).json("Error: " + err));
+                  })
+                  .catch((err) => res.status(400).json("Error: " + err));
+              }
             });
             res.json("success");
           });

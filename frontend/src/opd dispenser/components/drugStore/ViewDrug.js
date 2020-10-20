@@ -268,6 +268,14 @@ class ViewDrug extends Component {
         modalMessage: "Amount should be larger than 0",
       });
       this.setState({ modalShow: true });
+    } else if (
+      this.state.amount > this.state.availQuantity &&
+      this.state.actionType.trim() === "remove"
+    ) {
+      this.setState({
+        modalMessage: "Amount can not exceed available quantity to remove",
+      });
+      this.setState({ modalShow: true });
     } else {
       const drugAction = {
         actionType: this.state.actionType,
