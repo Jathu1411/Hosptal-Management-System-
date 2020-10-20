@@ -20,7 +20,7 @@ export default class PatientDetails extends Component {
       consultation: {},
       admission: {},
       opdConsultant: "",
-      admittedBy: "", //
+      admittedBy: "",
     };
   }
 
