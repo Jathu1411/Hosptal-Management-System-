@@ -10,7 +10,7 @@ let ClinicReference = require("../models/clinicReference.model");
 /*IC Operation
 ****dashboard - normal consultant functions 
 - redirect to dashboard
-generate monthly statistic -  get all the patients, consultations, opd drugs
+****generate monthly statistic -  get all the patients, consultations, opd drugs
 - calculate overall, patient, drug, disease summary
 - redirect to generatedd monthly statistic page
 */
@@ -28,10 +28,10 @@ router.route("/min_date").get(auth, (req, res) => {
 });
 
 //get patient summary
-router.route("/patient_summary/:month/:year").get((req, res) => {
-  // if (req.userData.unit !== "OPD" || req.userData.post !== "In Charge") {
-  //   throw new HttpError("You are not authorized", 401);
-  // }
+router.route("/patient_summary/:month/:year").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "In Charge") {
+    throw new HttpError("You are not authorized", 401);
+  }
 
   let month = req.params.month;
   const year = req.params.year;
@@ -133,10 +133,10 @@ router.route("/patient_summary/:month/:year").get((req, res) => {
 });
 
 //get drug summary
-router.route("/drug_summary/:month/:year").get((req, res) => {
-  // if (req.userData.unit !== "OPD" || req.userData.post !== "In Charge") {
-  //   throw new HttpError("You are not authorized", 401);
-  // }
+router.route("/drug_summary/:month/:year").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "In Charge") {
+    throw new HttpError("You are not authorized", 401);
+  }
 
   let month = parseInt(req.params.month);
   const year = parseInt(req.params.year);
@@ -167,10 +167,10 @@ router.route("/drug_summary/:month/:year").get((req, res) => {
 });
 
 //get disease summary
-router.route("/disease_summary/:month/:year").get((req, res) => {
-  // if (req.userData.unit !== "OPD" || req.userData.post !== "In Charge") {
-  //   throw new HttpError("You are not authorized", 401);
-  // }
+router.route("/disease_summary/:month/:year").get(auth, (req, res) => {
+  if (req.userData.unit !== "OPD" || req.userData.post !== "In Charge") {
+    throw new HttpError("You are not authorized", 401);
+  }
 
   let month = req.params.month;
   const year = req.params.year;
